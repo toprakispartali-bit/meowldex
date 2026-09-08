@@ -26,7 +26,7 @@ const balls = {
 "DR Congo": "Uncommon",
 "Namibia": "Uncommon",
 "Niger": "Uncommon",
-"Libya": "Uncommon"
+"Libya": "Uncommon",
 
   "Angola": "Common",
 "Botswana": "Common",
