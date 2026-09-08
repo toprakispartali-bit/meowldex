@@ -323,6 +323,15 @@ if (interaction.commandName === "spawn") {
 
   await interaction.showModal(modal);
 }
+
+  if (interaction.isModalSubmit() && interaction.customId === "guess_ball") {
+  const guess = interaction.fields.getTextInputValue("ball_guess");
+
+  await interaction.reply({
+    content: `You guessed: **${guess}**`,
+    ephemeral: true
+  });
+}
   
 if (interaction.commandName === "collection") {
   const userId = interaction.user.id;
