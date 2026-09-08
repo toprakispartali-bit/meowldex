@@ -269,7 +269,7 @@ const balls = {
 
 const collections = {};
 
-client.on("interactionCreate", interaction => {
+client.on("interactionCreate", async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === "rarity") {
