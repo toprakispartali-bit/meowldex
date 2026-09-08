@@ -327,11 +327,23 @@ if (interaction.commandName === "spawn") {
   await interaction.showModal(modal);
 }
 if (interaction.isModalSubmit() && interaction.customId === "guess_ball") {
-  const guess = interaction.fields.getTextInputValue("ball_guess").trim();
+  
+const guess = interaction.fields.getTextInputValue("ball_guess").trim();
 
 if (guess.toLowerCase() === currentBall.toLowerCase()) {
+  const correctMessages = [
+    `${interaction.user} was correct and got **${currentBall}**!`,
+    `${interaction.user} caught **${currentBall}**!`,
+    `${interaction.user} got it! It was **${currentBall}**!`,
+    `${interaction.user} guessed correctly! The ball was **${currentBall}**!`,
+    `${interaction.user} successfully caught **${currentBall}**!`
+  ];
+
+  const randomMessage =
+    correctMessages[Math.floor(Math.random() * correctMessages.length)];
+
   await interaction.reply({
-    content: `${interaction.user} was correct and got **${currentBall}**!`
+    content: randomMessage
   });
 
   currentBall = null;
