@@ -328,37 +328,37 @@ if (interaction.commandName === "spawn") {
 }
 if (interaction.isModalSubmit() && interaction.customId === "guess_ball") {
 
-if (!currentBall) {
-  return interaction.reply({
-    content: `${interaction.user}, this ball was already caught!`
-  });
-}
-  
-const guess = interaction.fields.getTextInputValue("ball_guess").trim();
-
-if (guess.toLowerCase() === currentBall.toLowerCase()) {
-  const correctMessages = [
-    `${interaction.user} was correct and got **${currentBall}**!`,
-    `${interaction.user} caught **${currentBall}**!`,
-    `${interaction.user} got it! It was **${currentBall}**!`,
-    `${interaction.user} guessed correctly! The ball was **${currentBall}**!`,
-    `${interaction.user} successfully caught **${currentBall}**!`
-  ];
-
-  const randomMessage =
-    correctMessages[Math.floor(Math.random() * correctMessages.length)];
-
-  await interaction.reply({
-    content: randomMessage
-  });
-
-  currentBall = null;
-} else {
-  await interaction.reply({
-    content: `${interaction.user} guessed the wrong ball!`
-  });
-}
+  if (!currentBall) {
+    return interaction.reply({
+      content: `${interaction.user}, this ball was already caught!`
+    });
   }
+
+  const guess = interaction.fields.getTextInputValue("ball_guess").trim();
+
+  if (guess.toLowerCase() === currentBall.toLowerCase()) {
+    const correctMessages = [
+      `${interaction.user} was correct and got **${currentBall}**!`,
+      `${interaction.user} caught **${currentBall}**!`,
+      `${interaction.user} got it! It was **${currentBall}**!`,
+      `${interaction.user} guessed correctly! The ball was **${currentBall}**!`,
+      `${interaction.user} successfully caught **${currentBall}**!`
+    ];
+
+    const randomMessage =
+      correctMessages[Math.floor(Math.random() * correctMessages.length)];
+
+    await interaction.reply({
+      content: randomMessage
+    });
+
+    currentBall = null;
+  } else {
+    await interaction.reply({
+      content: `${interaction.user} guessed the wrong ball!`
+    });
+  }
+}
   
 if (interaction.commandName === "collection") {
   const userId = interaction.user.id;
