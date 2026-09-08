@@ -3,7 +3,13 @@ const {
   GatewayIntentBits,
   REST,
   Routes,
-  SlashCommandBuilder
+  SlashCommandBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ActionRowBuilder,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle
 } = require("discord.js");
 
 const client = new Client({
@@ -287,6 +293,20 @@ client.on("interactionCreate", interaction => {
 );
   }
 
+if (interaction.commandName === "spawn") {
+  const catchButton = new ButtonBuilder()
+    .setCustomId("catch_ball")
+    .setLabel("Catch")
+    .setStyle(ButtonStyle.Primary);
+
+  const row = new ActionRowBuilder().addComponents(catchButton);
+
+  await interaction.reply({
+    content: "A wild country ball appeared!",
+    components: [row]
+  });
+}
+  
 if (interaction.commandName === "collection") {
   const userId = interaction.user.id;
   const collection = collections[userId] || [];
@@ -324,6 +344,10 @@ const commands = [
         .setRequired(true)
     )
 ].map(command => command.toJSON());
+
+new SlashCommandBuilder()
+  .setName("spawn")
+  .setDescription("Spawns a test MeowlDex ball")
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
