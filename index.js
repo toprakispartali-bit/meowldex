@@ -277,6 +277,7 @@ const flagCodes = {
 
 const collections = {};
 const activeSpawns = new Map();
+const testSpawns = new Set();
 let messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
 
 client.on("messageCreate", async message => {
@@ -286,7 +287,7 @@ client.on("messageCreate", async message => {
 
   console.log(`Messages until spawn: ${messagesUntilSpawn}`);
   
-  if (messagesUntilSpawn <= 0) {
+  if (messagesUntilSpawn <= 0 && activeSpawns.size === 0) {
   const availableBalls = Object.keys(flagCodes);
 const selectedBall =
   availableBalls[Math.floor(Math.random() * availableBalls.length)];
@@ -334,8 +335,7 @@ client.on("interactionCreate", async interaction => {
   }
 
 if (interaction.commandName === "spawn") {
-  const availableBalls = Object.keys(flagCodes);
-currentBall = availableBalls[Math.floor(Math.random() * availableBalls.length)];
+  const selectedBall = "Turkey";
 
   const catchButton = new ButtonBuilder()
     .setCustomId("catch_ball")
@@ -345,10 +345,14 @@ currentBall = availableBalls[Math.floor(Math.random() * availableBalls.length)];
   const row = new ActionRowBuilder().addComponents(catchButton);
 
   await interaction.reply({
-  content: "A wild country ball appeared!",
-  files: ["./turkey.png"],
-  components: [row]
-});
+    content: "A wild country ball appeared!",
+    files: ["./turkey.png"],
+    components: [row]
+  });
+
+  const spawnMessage = await interaction.fetchReply();
+
+  activeSpawns.set(spawnMessage.id, selectedBall);
 }
 
   if (interaction.isButton() && interaction.customId === "catch_ball") {
