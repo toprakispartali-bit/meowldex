@@ -304,9 +304,9 @@ const selectedBall =
     components: [row]
   });
 
-    activeSpawns.set(spawnMessage.id, selectedBall);
+   activeSpawns.set(spawnMessage.id, selectedBall);
 
-  messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
+messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
 }
 });
 
