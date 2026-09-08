@@ -279,6 +279,12 @@ const collections = {};
 const activeSpawns = new Map();
 const testSpawns = new Set();
 let messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
+function hasRealSpawn() {
+  for (const id of activeSpawns.keys()) {
+    if (!testSpawns.has(id)) return true;
+  }
+  return false;
+}
 
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
@@ -287,7 +293,7 @@ client.on("messageCreate", async message => {
 
   console.log(`Messages until spawn: ${messagesUntilSpawn}`);
   
-  if (messagesUntilSpawn <= 0 && activeSpawns.size === 0) {
+  if (messagesUntilSpawn <= 0 && !hasRealSpawn()) {
   const availableBalls = Object.keys(flagCodes);
 const selectedBall =
   availableBalls[Math.floor(Math.random() * availableBalls.length)];
@@ -421,7 +427,19 @@ const disabledRow = new ActionRowBuilder().addComponents(disabledButton);
 await interaction.message.edit({
   components: [disabledRow]
 });
+const isTest = testSpawns.has(spawnMessageId);
 
+if (!isTest) {
+  const userId = interaction.user.id;
+
+  if (!collections[userId]) {
+    collections[userId] = [];
+  }
+
+  collections[userId].push(currentBall);
+}
+    
+    testSpawns.delete(spawnMessageId);
     activeSpawns.delete(spawnMessageId);
   } else {
     await interaction.reply({
