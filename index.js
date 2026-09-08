@@ -493,10 +493,15 @@ const commands = [
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
 (async () => {
-  await rest.put(
-Routes.applicationGuildCommands("1546632087430373416", "1527806660129591497"),
-    { body: commands }
-  );
+  try {
+    await rest.put(
+      Routes.applicationGuildCommands("1546632087430373416", "1527806660129591497"),
+      { body: commands }
+    );
+    console.log("Commands registered successfully!");
+  } catch (error) {
+    console.error("Command registration failed:", error);
+  }
 })();
 
 client.login(process.env.DISCORD_TOKEN);
