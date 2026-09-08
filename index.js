@@ -268,6 +268,8 @@ const balls = {
 };
 
 const collections = {};
+let currentBall = null;
+let messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
 
 client.on("interactionCreate", async interaction => {
 
