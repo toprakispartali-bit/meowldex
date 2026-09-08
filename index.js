@@ -276,7 +276,7 @@ const flagCodes = {
 };
 
 const collections = {};
-let currentBall = null;
+const activeSpawns = new Map();
 let messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
 
 client.on("messageCreate", message => {
