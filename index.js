@@ -302,11 +302,32 @@ if (interaction.commandName === "collection") {
     collection.join("\n")
   );
 }
+
+const commands = [
+  new SlashCommandBuilder()
+    .setName("rarity")
+    .setDescription("Shows the MeowlDex rarity tiers"),
+
+  new SlashCommandBuilder()
+    .setName("collection")
+    .setDescription("Shows your MeowlDex collection"),
+
+  new SlashCommandBuilder()
+    .setName("compare")
+    .setDescription("Compare your collection with another user")
+    .addUserOption(option =>
+      option
+        .setName("user")
+        .setDescription("The user to compare with")
+        .setRequired(true)
+    )
+].map(command => command.toJSON());
+
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
 (async () => {
   await rest.put(
-Routes.applicationGuildCommands("1546632087430373416", "153886360747402854"),
+Routes.applicationGuildCommands("1546632087430373416", "1538863607474028554"),
     { body: commands }
   );
 })();
