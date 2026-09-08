@@ -283,7 +283,7 @@ client.on("messageCreate", message => {
   console.log(`Messages until spawn: ${messagesUntilSpawn}`);
   
   if (messagesUntilSpawn <= 0 && !currentBall) {
-  currentBall = "Turkey";
+  currentBall = "France";
 
   const catchButton = new ButtonBuilder()
     .setCustomId("catch_ball")
