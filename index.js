@@ -342,12 +342,12 @@ const commands = [
         .setName("user")
         .setDescription("The user to compare with")
         .setRequired(true)
-    )
-].map(command => command.toJSON());
+        ),
 
-new SlashCommandBuilder()
-  .setName("spawn")
-  .setDescription("Spawns a test MeowlDex ball")
+  new SlashCommandBuilder()
+    .setName("spawn")
+    .setDescription("Spawns a test MeowlDex ball")
+].map(command => command.toJSON());
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
