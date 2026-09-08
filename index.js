@@ -327,6 +327,12 @@ if (interaction.commandName === "spawn") {
   await interaction.showModal(modal);
 }
 if (interaction.isModalSubmit() && interaction.customId === "guess_ball") {
+
+if (!currentBall) {
+  return interaction.reply({
+    content: `${interaction.user}, this ball was already caught!`
+  });
+}
   
 const guess = interaction.fields.getTextInputValue("ball_guess").trim();
 
