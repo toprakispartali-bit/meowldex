@@ -294,7 +294,7 @@ client.on("messageCreate", message => {
 
   message.channel.send({
     content: "A wild country ball appeared!",
-    files: ["./turkey.png"],
+    files: [`https://flagcdn.com/w320/${flagCodes[currentBall]}.png`],
     components: [row]
   });
 
@@ -326,8 +326,7 @@ client.on("interactionCreate", async interaction => {
   }
 
 if (interaction.commandName === "spawn") {
-  const ballNames = Object.keys(balls);
-currentBall = ballNames[Math.floor(Math.random() * ballNames.length)];
+  currentBall = "France";
 
   const catchButton = new ButtonBuilder()
     .setCustomId("catch_ball")
