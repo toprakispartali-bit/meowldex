@@ -326,7 +326,7 @@ if (interaction.commandName === "spawn") {
 
   await interaction.showModal(modal);
 }
-
+if (interaction.isModalSubmit() && interaction.customId === "guess_ball") {
   const guess = interaction.fields.getTextInputValue("ball_guess").trim();
 
 if (guess.toLowerCase() === currentBall.toLowerCase()) {
@@ -340,6 +340,7 @@ if (guess.toLowerCase() === currentBall.toLowerCase()) {
     content: `${interaction.user} guessed the wrong ball!`
   });
 }
+  }
   
 if (interaction.commandName === "collection") {
   const userId = interaction.user.id;
