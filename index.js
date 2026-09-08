@@ -306,6 +306,7 @@ const selectedBall =
   });
 
    activeSpawns.set(spawnMessage.id, selectedBall);
+    
 
 messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
 }
@@ -353,6 +354,7 @@ if (interaction.commandName === "spawn") {
   const spawnMessage = await interaction.fetchReply();
 
   activeSpawns.set(spawnMessage.id, selectedBall);
+  testSpawns.add(spawnMessage.id);
 }
 
   if (interaction.isButton() && interaction.customId === "catch_ball") {
