@@ -293,6 +293,9 @@ client.on("interactionCreate", async interaction => {
   }
 
 if (interaction.commandName === "spawn") {
+  const ballNames = Object.keys(balls);
+  currentBall = ballNames[Math.floor(Math.random() * ballNames.length)];
+
   const catchButton = new ButtonBuilder()
     .setCustomId("catch_ball")
     .setLabel("Catch")
@@ -324,12 +327,17 @@ if (interaction.commandName === "spawn") {
   await interaction.showModal(modal);
 }
 
-  if (interaction.isModalSubmit() && interaction.customId === "guess_ball") {
-  const guess = interaction.fields.getTextInputValue("ball_guess");
+  const guess = interaction.fields.getTextInputValue("ball_guess").trim();
 
+if (guess.toLowerCase() === currentBall.toLowerCase()) {
   await interaction.reply({
-    content: `You guessed: **${guess}**`,
-    ephemeral: true
+    content: `${interaction.user} was correct and got **${currentBall}**!`
+  });
+
+  currentBall = null;
+} else {
+  await interaction.reply({
+    content: `${interaction.user} guessed the wrong ball!`
   });
 }
   
@@ -350,6 +358,8 @@ if (interaction.commandName === "collection") {
   );
 }
 });
+
+let currentBall = null;
 
 const commands = [
   new SlashCommandBuilder()
