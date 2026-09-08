@@ -392,8 +392,6 @@ if (interaction.commandName === "collection") {
 }
 });
 
-let currentBall = null;
-
 const commands = [
   new SlashCommandBuilder()
     .setName("rarity")
