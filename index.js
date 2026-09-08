@@ -416,7 +416,7 @@ await interaction.message.edit({
   components: [disabledRow]
 });
 
-    currentBall = null;
+    activeSpawns.delete(spawnMessageId);
   } else {
     await interaction.reply({
       content: `${interaction.user} guessed the wrong ball!`
