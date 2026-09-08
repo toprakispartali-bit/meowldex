@@ -270,7 +270,6 @@ const balls = {
 const collections = {};
 
 client.on("interactionCreate", async interaction => {
-  if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === "rarity") {
     interaction.reply(
@@ -305,6 +304,24 @@ if (interaction.commandName === "spawn") {
     content: "A wild country ball appeared!",
     components: [row]
   });
+}
+
+  if (interaction.isButton() && interaction.customId === "catch_ball") {
+  const modal = new ModalBuilder()
+    .setCustomId("guess_ball")
+    .setTitle("Catch the ball!");
+
+  const guessInput = new TextInputBuilder()
+    .setCustomId("ball_guess")
+    .setLabel("Which ball is this?")
+    .setStyle(TextInputStyle.Short)
+    .setRequired(true);
+
+  const row = new ActionRowBuilder().addComponents(guessInput);
+
+  modal.addComponents(row);
+
+  await interaction.showModal(modal);
 }
   
 if (interaction.commandName === "collection") {
@@ -353,7 +370,7 @@ const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
 (async () => {
   await rest.put(
-Routes.applicationGuildCommands("1546632087430373416", "1538863607474028554"),
+Routes.applicationGuildCommands("1546632087430373416", "1527806660129591497"),
     { body: commands }
   );
 })();
