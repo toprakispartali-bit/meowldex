@@ -293,8 +293,7 @@ client.on("interactionCreate", async interaction => {
   }
 
 if (interaction.commandName === "spawn") {
-  const ballNames = Object.keys(balls);
-  currentBall = ballNames[Math.floor(Math.random() * ballNames.length)];
+  currentBall = "Turkey";
 
   const catchButton = new ButtonBuilder()
     .setCustomId("catch_ball")
@@ -304,9 +303,10 @@ if (interaction.commandName === "spawn") {
   const row = new ActionRowBuilder().addComponents(catchButton);
 
   await interaction.reply({
-    content: "A wild country ball appeared!",
-    components: [row]
-  });
+  content: "A wild country ball appeared!",
+  files: ["./turkey.png"],
+  components: [row]
+});
 }
 
   if (interaction.isButton() && interaction.customId === "catch_ball") {
