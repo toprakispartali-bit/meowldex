@@ -322,7 +322,8 @@ client.on("interactionCreate", async interaction => {
   }
 
 if (interaction.commandName === "spawn") {
-  currentBall = "Turkey";
+  const ballNames = Object.keys(balls);
+currentBall = ballNames[Math.floor(Math.random() * ballNames.length)];
 
   const catchButton = new ButtonBuilder()
     .setCustomId("catch_ball")
