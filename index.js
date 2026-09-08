@@ -277,6 +277,25 @@ client.on("messageCreate", message => {
   messagesUntilSpawn--;
 
   console.log(`Messages until spawn: ${messagesUntilSpawn}`);
+  
+  if (messagesUntilSpawn <= 0 && !currentBall) {
+  currentBall = "Turkey";
+
+  const catchButton = new ButtonBuilder()
+    .setCustomId("catch_ball")
+    .setLabel("Catch")
+    .setStyle(ButtonStyle.Primary);
+
+  const row = new ActionRowBuilder().addComponents(catchButton);
+
+  message.channel.send({
+    content: "A wild country ball appeared!",
+    files: ["./turkey.png"],
+    components: [row]
+  });
+
+  messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
+}
 });
 
 client.on("interactionCreate", async interaction => {
