@@ -267,6 +267,10 @@ const balls = {
 "Inca Empire": "Ancient"
 };
 
+const flagCodes = {
+  "France": "fr"
+};
+
 const collections = {};
 let currentBall = null;
 let messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
