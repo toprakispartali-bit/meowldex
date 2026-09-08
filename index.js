@@ -271,6 +271,14 @@ const collections = {};
 let currentBall = null;
 let messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
 
+client.on("messageCreate", message => {
+  if (message.author.bot) return;
+
+  messagesUntilSpawn--;
+
+  console.log(`Messages until spawn: ${messagesUntilSpawn}`);
+});
+
 client.on("interactionCreate", async interaction => {
 
   if (interaction.commandName === "rarity") {
