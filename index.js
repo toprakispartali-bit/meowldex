@@ -65,7 +65,7 @@ const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
 (async () => {
   await rest.put(
-    Routes.applicationGuildCommands("1545901945057845330", "1527806660129591497"),
+Routes.applicationGuildCommands("1546632087430373416", "153886360747402854"),
     { body: commands }
   );
 })();
