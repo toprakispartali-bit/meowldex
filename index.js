@@ -96,7 +96,7 @@ const balls = {
 "Scotland": "Rare",
 "Wales": "Rare",
 "Ukraine": "Rare",
-"Germany": "Rare"
+"Germany": "Rare",
 "Serbia": "Uncommon",
 "Bosnia and Herzegovina": "Uncommon",
 "Czechia": "Uncommon",
@@ -207,7 +207,7 @@ const balls = {
 
 "Australia": "Legendary",
 "New Zealand": "Rare",
-"Papua New Guinea": "Uncommon"
+"Papua New Guinea": "Uncommon",
 "Fiji": "Common",
 "Solomon Islands": "Common",
 "Vanuatu": "Common",
@@ -235,7 +235,7 @@ const balls = {
 "Portuguese Empire": "Superpower",
 "Achaemenid Empire": "Superpower",
 "Han Dynasty": "Superpower",
-"Qing Dynasty": "Superpower"
+"Qing Dynasty": "Superpower",
 "Austria-Hungary": "Superpower",
 "German Empire": "Superpower",
 "Nazi Germany": "Superpower",
@@ -256,7 +256,7 @@ const balls = {
 "Mycenaean Greece": "Ancient",
 "Maya Civilization": "Ancient",
 "Aztec Empire": "Ancient",
-"Inca Empire": "Ancient",
+"Inca Empire": "Ancient"
 };
 
 const collections = {};
