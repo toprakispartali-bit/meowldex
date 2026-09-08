@@ -330,7 +330,8 @@ client.on("interactionCreate", async interaction => {
   }
 
 if (interaction.commandName === "spawn") {
-  currentBall = "France";
+  const availableBalls = Object.keys(flagCodes);
+currentBall = availableBalls[Math.floor(Math.random() * availableBalls.length)];
 
   const catchButton = new ButtonBuilder()
     .setCustomId("catch_ball")
