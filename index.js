@@ -278,7 +278,10 @@ const flagCodes = {
 const collections = {};
 const activeSpawns = new Map();
 const testSpawns = new Set();
+
 let messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
+let autoSpawnInProgress = false;
+
 function hasRealSpawn() {
   for (const id of activeSpawns.keys()) {
     if (!testSpawns.has(id)) return true;
@@ -293,7 +296,8 @@ client.on("messageCreate", async message => {
 
   console.log(`Messages until spawn: ${messagesUntilSpawn}`);
   
-  if (messagesUntilSpawn <= 0 && !hasRealSpawn()) {
+  if (messagesUntilSpawn <= 0 && !hasRealSpawn() && !autoSpawnInProgress) {
+    autoSpawnInProgress = true;
   const availableBalls = Object.keys(flagCodes);
 const selectedBall =
   availableBalls[Math.floor(Math.random() * availableBalls.length)];
@@ -310,9 +314,8 @@ const selectedBall =
     files: [`https://flagcdn.com/w320/${flagCodes[selectedBall]}.png`],
     components: [row]
   });
-
-   activeSpawns.set(spawnMessage.id, selectedBall);
-    
+    activeSpawns.set(spawnMessage.id, selectedBall);
+autoSpawnInProgress = false;
 
 messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
 }
@@ -401,6 +404,13 @@ const currentBall = activeSpawns.get(spawnMessageId);
   const guess = interaction.fields.getTextInputValue("ball_guess").trim();
 
   if (guess.toLowerCase() === currentBall.toLowerCase()) {
+    if (!activeSpawns.has(spawnMessageId)) {
+  return interaction.reply({
+    content: `${interaction.user}, this ball was already caught!`
+  });
+}
+
+activeSpawns.delete(spawnMessageId);
     const correctMessages = [
       `${interaction.user} was correct and got **${currentBall}**!`,
       `${interaction.user} caught **${currentBall}**!`,
@@ -440,7 +450,6 @@ if (!isTest) {
 }
     
     testSpawns.delete(spawnMessageId);
-    activeSpawns.delete(spawnMessageId);
   } else {
     await interaction.reply({
       content: `${interaction.user} guessed the wrong ball!`
