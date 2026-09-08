@@ -1,6 +1,9 @@
 const {
   Client,
-  GatewayIntentBits
+  GatewayIntentBits,
+  REST,
+  Routes,
+  SlashCommandBuilder
 } = require("discord.js");
 
 const client = new Client({
@@ -17,7 +20,6 @@ const balls = {
   "Egypt": "Legendary",
   "Nigeria": "Legendary",
   "Algeria": "Legendary",
-  "Morocco": "Legendary",
   
 "Tunisia": "Rare",
 "South Africa": "Rare",
