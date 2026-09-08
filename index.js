@@ -268,7 +268,11 @@ const balls = {
 };
 
 const flagCodes = {
-  "France": "fr"
+  "France": "fr",
+  "Morocco": "ma",
+  "Japan": "jp",
+  "Germany": "de",
+  "Romania": "ro"
 };
 
 const collections = {};
