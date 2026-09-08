@@ -349,8 +349,20 @@ if (interaction.isModalSubmit() && interaction.customId === "guess_ball") {
       correctMessages[Math.floor(Math.random() * correctMessages.length)];
 
     await interaction.reply({
-      content: randomMessage
-    });
+  content: randomMessage
+});
+
+const disabledButton = new ButtonBuilder()
+  .setCustomId("catch_ball")
+  .setLabel("Caught!")
+  .setStyle(ButtonStyle.Secondary)
+  .setDisabled(true);
+
+const disabledRow = new ActionRowBuilder().addComponents(disabledButton);
+
+await interaction.message.edit({
+  components: [disabledRow]
+});
 
     currentBall = null;
   } else {
