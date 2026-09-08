@@ -279,15 +279,17 @@ const collections = {};
 const activeSpawns = new Map();
 let messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
 
-client.on("messageCreate", message => {
+client.on("messageCreate", async message => {
   if (message.author.bot) return;
 
   messagesUntilSpawn--;
 
   console.log(`Messages until spawn: ${messagesUntilSpawn}`);
   
-  if (messagesUntilSpawn <= 0 && !currentBall) {
-  currentBall = "France";
+  if (messagesUntilSpawn <= 0) {
+  const availableBalls = Object.keys(flagCodes);
+const selectedBall =
+  availableBalls[Math.floor(Math.random() * availableBalls.length)];
 
   const catchButton = new ButtonBuilder()
     .setCustomId("catch_ball")
@@ -296,11 +298,13 @@ client.on("messageCreate", message => {
 
   const row = new ActionRowBuilder().addComponents(catchButton);
 
-  message.channel.send({
+  const spawnMessage = await message.channel.send({
     content: "A wild country ball appeared!",
-    files: [`https://flagcdn.com/w320/${flagCodes[currentBall]}.png`],
+    files: [`https://flagcdn.com/w320/${flagCodes[selectedBall]}.png`],
     components: [row]
   });
+
+    activeSpawns.set(spawnMessage.id, selectedBall);
 
   messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
 }
