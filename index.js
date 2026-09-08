@@ -352,8 +352,16 @@ currentBall = availableBalls[Math.floor(Math.random() * availableBalls.length)];
 }
 
   if (interaction.isButton() && interaction.customId === "catch_ball") {
+    const ball = activeSpawns.get(interaction.message.id);
+
+if (!ball) {
+  return interaction.reply({
+    content: "This ball was already caught!",
+    ephemeral: true
+  });
+}
   const modal = new ModalBuilder()
-    .setCustomId("guess_ball")
+  .setCustomId(`guess_ball_${interaction.message.id}`)
     .setTitle("Catch the ball!");
 
   const guessInput = new TextInputBuilder()
