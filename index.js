@@ -68,7 +68,7 @@ const balls = {
 "Togo": "Common",
 "Uganda": "Common",
 "Zambia": "Common",
-"Zimbabwe": "Common"
+"Zimbabwe": "Common",
 
 
 "Vatican City": "Legendary",
@@ -79,7 +79,7 @@ const balls = {
 "Italy": "Legendary",
 "Norway": "Legendary",
 "Spain": "Legendary",
-"Switzerland": "Legendary"
+"Switzerland": "Legendary",
 
 "Romania": "Rare",
 "Bulgaria": "Rare",
@@ -100,7 +100,7 @@ const balls = {
 "Serbia": "Uncommon",
 "Bosnia and Herzegovina": "Uncommon",
 "Czechia": "Uncommon",
-"Northern Ireland": "Uncommon"
+"Northern Ireland": "Uncommon",
 
 "Albania": "Common",
 "Andorra": "Common",
@@ -120,7 +120,7 @@ const balls = {
 "San Marino": "Common",
 "Slovakia": "Common",
 "Slovenia": "Common",
-"Kosovo": "Common"
+"Kosovo": "Common",
 
 "Pakistan": "Legendary",
 "Japan": "Legendary",
@@ -129,7 +129,7 @@ const balls = {
 "Kazakhstan": "Legendary",
 "Indonesia": "Legendary",
 "Vietnam": "Legendary",
-"Singapore": "Legendary"
+"Singapore": "Legendary",
 "North Korea": "Rare",
 "Turkmenistan": "Rare",
 "Uzbekistan": "Rare",
@@ -140,10 +140,10 @@ const balls = {
 "Mongolia": "Rare",
 "Philippines": "Rare",
 "Bangladesh": "Rare",
-"Bhutan": "Rare"
+"Bhutan": "Rare",
 "Armenia": "Uncommon",
 "Myanmar": "Uncommon",
-"Sri Lanka": "Uncommon"
+"Sri Lanka": "Uncommon",
 
   "Brunei": "Common",
 "Cambodia": "Common",
@@ -152,37 +152,37 @@ const balls = {
 "Nepal": "Common",
 "Taiwan": "Common",
 "Tajikistan": "Common",
-"Timor-Leste": "Common"
+"Timor-Leste": "Common",
 "Saudi Arabia": "Legendary",
 "Palestine": "Legendary",
 "UAE": "Legendary",
-"Iran": "Legendary"
+"Iran": "Legendary",
 "Iraq": "Rare",
 "Syria": "Rare",
-"Yemen": "Rare"
-"Qatar": "Uncommon"
+"Yemen": "Rare",
+"Qatar": "Uncommon",
 "Bahrain": "Common",
 "Kuwait": "Common",
 "Lebanon": "Common",
 "Jordan": "Common",
-"Oman": "Common"
+"Oman": "Common",
 
 "Brazil": "Legendary",
 "Mexico": "Legendary",
 "Canada": "Legendary",
 "Chile": "Legendary",
 "Argentina": "Legendary",
-"Colombia": "Legendary"
+"Colombia": "Legendary",
 
 "Venezuela": "Rare",
 "Uruguay": "Rare",
 "Paraguay": "Rare",
 "Ecuador": "Rare",
-"Peru": "Rare"
+"Peru": "Rare",
 
 "Jamaica": "Uncommon",
 "El Salvador": "Uncommon",
-"Panama": "Uncommon"
+"Panama": "Uncommon",
 
 "Antigua and Barbuda": "Common",
 "Bahamas": "Common",
@@ -203,7 +203,7 @@ const balls = {
 "Trinidad and Tobago": "Common",
 "Bolivia": "Common",
 "Guyana": "Common",
-"Suriname": "Common"
+"Suriname": "Common",
 
 "Australia": "Legendary",
 "New Zealand": "Rare",
@@ -218,8 +218,8 @@ const balls = {
 "Marshall Islands": "Common",
 "Palau": "Common",
 "Nauru": "Common",
-"Tuvalu": "Common"
-"Antarctica": "Legendary"
+"Tuvalu": "Common",
+"Antarctica": "Legendary",
 "Almohad Caliphate": "Superpower",
 "Dacian Kingdom": "Legendary",
   "USA": "Superpower",
@@ -238,7 +238,7 @@ const balls = {
 "Qing Dynasty": "Superpower"
 "Austria-Hungary": "Superpower",
 "German Empire": "Superpower",
-"Nazi Germany": "Superpower"
+"Nazi Germany": "Superpower",
 "Umayyad Caliphate": "Superpower",
 "Seljuk Empire": "Superpower",
 
@@ -248,7 +248,7 @@ const balls = {
   "Babylon": "Ancient",
   "Hittite Empire": "Ancient",
   "Assyrian Empire": "Ancient",
-  "Ancient Greece": "Ancient"
+  "Ancient Greece": "Ancient",
 "Alaouite Dynasty": "Ancient",
   "Sumer": "Ancient",
 "Carthage": "Ancient",
