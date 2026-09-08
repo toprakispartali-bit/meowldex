@@ -284,7 +284,6 @@ client.on("interactionCreate", interaction => {
   "• Ancient Greece"
 );
   }
-});
 
 if (interaction.commandName === "collection") {
   const userId = interaction.user.id;
@@ -302,6 +301,7 @@ if (interaction.commandName === "collection") {
     collection.join("\n")
   );
 }
+});
 
 const commands = [
   new SlashCommandBuilder()
