@@ -376,7 +376,9 @@ if (!ball) {
 
   await interaction.showModal(modal);
 }
-if (interaction.isModalSubmit() && interaction.customId === "guess_ball") {
+if (interaction.isModalSubmit() && interaction.customId.startsWith("guess_ball_")) {
+  const spawnMessageId = interaction.customId.replace("guess_ball_", "");
+const currentBall = activeSpawns.get(spawnMessageId);
 
   if (!currentBall) {
     return interaction.reply({
