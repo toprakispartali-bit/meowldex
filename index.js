@@ -666,6 +666,11 @@ const craftRecipes = {
   "desert rivals": {
     ingredients: ["Morocco", "Algeria"],
     result: "Desert Rivals"
+  },
+
+  "european union": {
+    ingredients: ["France", "Germany"],
+    result: "European Union"
   }
 };
 
@@ -678,27 +683,6 @@ function hasRealSpawn() {
 
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
-
-  if (message.content === "!crafttest") {
-  await tursoQuery(
-    `INSERT INTO collections (user_id, ball_name, quantity)
-     VALUES (?, ?, 1)
-     ON CONFLICT(user_id, ball_name)
-     DO UPDATE SET quantity = quantity + 1`,
-    [message.author.id, "Morocco"]
-  );
-
-  await tursoQuery(
-    `INSERT INTO collections (user_id, ball_name, quantity)
-     VALUES (?, ?, 1)
-     ON CONFLICT(user_id, ball_name)
-     DO UPDATE SET quantity = quantity + 1`,
-    [message.author.id, "Algeria"]
-  );
-
-  await message.reply("🧪 Added Morocco + Algeria for the crafting test!");
-  return;
-}
 
   messagesUntilSpawn--;
 
@@ -926,48 +910,45 @@ if (!isTest) {
     owned[row[0].value] = Number(row[1].value);
   }
 
-  const recipe = craftRecipes["desert rivals"];
+  const recipeName = interaction.options.getString("recipe");
+const recipe = craftRecipes[recipeName];
 
   const hasIngredients = recipe.ingredients.every(
     ball => (owned[ball] || 0) >= 1
   );
 
   if (!hasIngredients) {
-    return interaction.reply(
-      `🛠️ You need **Morocco + Algeria** to craft **Desert Rivals**!`
-    );
-  }
+  return interaction.reply(
+    `🛠️ You need **${recipe.ingredients.join(" + ")}** to craft **${recipe.result}**!`
+  );
+}
 
 await tursoTransaction([
-  {
+  ...recipe.ingredients.map(ball => ({
     sql: `UPDATE collections
           SET quantity = quantity - 1
           WHERE user_id = ? AND ball_name = ?`,
-    args: [userId, "Morocco"]
-  },
-  {
-    sql: `UPDATE collections
-          SET quantity = quantity - 1
-          WHERE user_id = ? AND ball_name = ?`,
-    args: [userId, "Algeria"]
-  },
+    args: [userId, ball]
+  })),
+
   {
     sql: `DELETE FROM collections
           WHERE user_id = ? AND quantity <= 0`,
     args: [userId]
   },
+
   {
     sql: `INSERT INTO collections (user_id, ball_name, quantity)
           VALUES (?, ?, 1)
           ON CONFLICT(user_id, ball_name)
           DO UPDATE SET quantity = quantity + 1`,
-    args: [userId, "Desert Rivals"]
+    args: [userId, recipe.result]
   }
 ]);
 
-return interaction.reply(
+rreturn interaction.reply(
   `🛠️ **CRAFT SUCCESSFUL!**\n\n` +
-  `🇲🇦 Morocco + 🇩🇿 Algeria → **Desert Rivals** ✨`
+  `${recipe.ingredients.join(" + ")} → **${recipe.result}** ✨`
 );
 }
   
@@ -1031,9 +1012,25 @@ const commands = [
     .setName("spawn")
     .setDescription("Spawns a test MeowlDex ball"),
 
-  new SlashCommandBuilder()
+ new SlashCommandBuilder()
   .setName("craft")
   .setDescription("Craft special MeowlDex balls")
+  .addStringOption(option =>
+    option
+      .setName("recipe")
+      .setDescription("Choose what you want to craft")
+      .setRequired(true)
+      .addChoices(
+  {
+    name: "Desert Rivals",
+    value: "desert rivals"
+  },
+  {
+    name: "European Union",
+    value: "european union"
+  }
+)
+  )
   
 ].map(command => command.toJSON());
 
