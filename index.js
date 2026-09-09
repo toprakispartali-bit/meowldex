@@ -679,6 +679,27 @@ function hasRealSpawn() {
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
 
+  if (message.content === "!crafttest") {
+  await tursoQuery(
+    `INSERT INTO collections (user_id, ball_name, quantity)
+     VALUES (?, ?, 1)
+     ON CONFLICT(user_id, ball_name)
+     DO UPDATE SET quantity = quantity + 1`,
+    [message.author.id, "Morocco"]
+  );
+
+  await tursoQuery(
+    `INSERT INTO collections (user_id, ball_name, quantity)
+     VALUES (?, ?, 1)
+     ON CONFLICT(user_id, ball_name)
+     DO UPDATE SET quantity = quantity + 1`,
+    [message.author.id, "Algeria"]
+  );
+
+  await message.reply("🧪 Added Morocco + Algeria for the crafting test!");
+  return;
+}
+
   messagesUntilSpawn--;
 
   console.log(
