@@ -663,9 +663,9 @@ function pickWeightedBall() {
   const availableBalls = Object.keys(balls).filter(
   name => flagCodes[name] || customArt[name]
 
-  const availableRarities = [
-    ...new Set(availableBalls.map(name => balls[name]))
-  ];
+  const availableBalls = Object.keys(balls).filter(
+  name => flagCodes[name] || customArt[name]
+);
 
   const totalWeight = availableRarities.reduce(
     (sum, rarity) => sum + rarityWeights[rarity],
