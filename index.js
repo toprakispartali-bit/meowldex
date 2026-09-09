@@ -610,6 +610,8 @@ function hasRealSpawn() {
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
 
+  if (message.channel.id !== "1546803046053576704") return;
+
   if (message.content === "!dbtest") {
   try {
     await tursoQuery("SELECT 1");
