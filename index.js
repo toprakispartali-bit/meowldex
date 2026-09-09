@@ -1154,7 +1154,7 @@ const commands = [
     value: "soviet union"
   }
 )
-  )
+  ),
 
   new SlashCommandBuilder()
   .setName("previewball")
