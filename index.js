@@ -606,7 +606,8 @@ const customArt = {
   "Turkey": "./turkey.png",
   "Saudi Arabia": "./saudi-arabia.png",
   "Algeria": "./algeria.png",
-  "Morocco": "./morocco.png"
+  "Morocco": "./morocco.png",
+  "Soviet Union": "./soviet-union.png"
 };
 
 const ballAliases = {
@@ -654,8 +655,13 @@ const rarityWeights = {
   "Ancient": 1,
 };
 
+const spawnMultipliers = {
+  "Soviet Union": 0.35
+};
+
 function pickWeightedBall() {
-  const availableBalls = Object.keys(flagCodes).filter(name => balls[name]);
+  const availableBalls = Object.keys(balls).filter(
+  name => flagCodes[name] || customArt[name]
 
   const availableRarities = [
     ...new Set(availableBalls.map(name => balls[name]))
@@ -682,9 +688,20 @@ function pickWeightedBall() {
     name => balls[name] === selectedRarity
   );
 
-  return possibleBalls[
-    Math.floor(Math.random() * possibleBalls.length)
-  ];
+  const weightedBalls = [];
+
+for (const ball of possibleBalls) {
+  const multiplier = spawnMultipliers[ball] ?? 1;
+  const tickets = Math.max(1, Math.round(multiplier * 100));
+
+  for (let i = 0; i < tickets; i++) {
+    weightedBalls.push(ball);
+  }
+}
+
+return weightedBalls[
+  Math.floor(Math.random() * weightedBalls.length)
+];
 }
 
 const collections = {};
