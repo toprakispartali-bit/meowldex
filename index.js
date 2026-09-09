@@ -1156,7 +1156,7 @@ const commands = [
 )
   ),
 
-  new SlashCommandBuilder()
+ new SlashCommandBuilder()
   .setName("previewball")
   .setDescription("Preview the current art of a countryball")
   .addStringOption(option =>
@@ -1164,8 +1164,7 @@ const commands = [
       .setName("countryball")
       .setDescription("The countryball you want to preview")
       .setRequired(true)
-  ),
-  
+  )
 ].map(command => command.toJSON());
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
