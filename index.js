@@ -385,6 +385,7 @@ const balls = {
 "Nazi Germany": "Superpower",
 "Umayyad Caliphate": "Superpower",
 "Seljuk Empire": "Superpower",
+  "Soviet Union": "Superpower",
 
   "Xiongnu": "Ancient",
   "Göktürk Khaganate": "Ancient",
@@ -707,7 +708,28 @@ const craftRecipes = {
   "european union": {
     ingredients: ["France", "Germany"],
     result: "European Union"
-  }
+  },
+
+  "soviet union": {
+  ingredients: [
+    "Russia",
+    "Ukraine",
+    "Belarus",
+    "Kazakhstan",
+    "Estonia",
+    "Latvia",
+    "Lithuania",
+    "Georgia",
+    "Armenia",
+    "Azerbaijan",
+    "Uzbekistan",
+    "Turkmenistan",
+    "Kyrgyzstan",
+    "Tajikistan",
+    "Moldova"
+  ],
+  result: "Soviet Union"
+}
 };
 
 function hasRealSpawn() {
@@ -1083,7 +1105,7 @@ const commands = [
       .setName("recipe")
       .setDescription("Choose what you want to craft")
       .setRequired(true)
-      .addChoices(
+     .addChoices(
   {
     name: "Desert Rivals",
     value: "desert rivals"
@@ -1091,6 +1113,10 @@ const commands = [
   {
     name: "European Union",
     value: "european union"
+  },
+  {
+    name: "Soviet Union",
+    value: "soviet union"
   }
 )
   )
