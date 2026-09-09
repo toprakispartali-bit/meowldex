@@ -618,25 +618,6 @@ function hasRealSpawn() {
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
 
-  if (message.content === "!dbtest") {
-  try {
-    await tursoQuery(
-  `INSERT INTO collections (user_id, ball_name, quantity)
-   VALUES (?, ?, 1)
-   ON CONFLICT(user_id, ball_name)
-   DO UPDATE SET quantity = quantity + 1`,
-  [message.author.id, "Russia"]
-);
-    await message.reply("✅ Russia refunded to your collection! 🇷🇺");
-  } catch (error) {
-    await message.reply(
-      `❌ Database error: ${error.message.slice(0, 1500)}`
-    );
-  }
-
-  return;
-}
-
   messagesUntilSpawn--;
 
   console.log(
@@ -903,10 +884,6 @@ const commands = [
   new SlashCommandBuilder()
     .setName("spawn")
     .setDescription("Spawns a test MeowlDex ball"),
-
-  new SlashCommandBuilder()
-  .setName("dbtest")
-  .setDescription("Tests the MeowlDex database")
   
 ].map(command => command.toJSON());
 
