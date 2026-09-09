@@ -469,6 +469,49 @@ const customArt = {
   "Turkey": "./turkey.png",
 };
 
+const rarityWeights = {
+  "Common": 50,
+  "Uncommon": 25,
+  "Rare": 15,
+  "Legendary": 7,
+  "Mythic": 2,
+  "Superpower": 1,
+  "Ancient": 1,
+};
+
+function pickWeightedBall() {
+  const availableBalls = Object.keys(flagCodes).filter(name => balls[name]);
+
+  const availableRarities = [
+    ...new Set(availableBalls.map(name => balls[name]))
+  ];
+
+  const totalWeight = availableRarities.reduce(
+    (sum, rarity) => sum + rarityWeights[rarity],
+    0
+  );
+
+  let roll = Math.random() * totalWeight;
+  let selectedRarity;
+
+  for (const rarity of availableRarities) {
+    roll -= rarityWeights[rarity];
+
+    if (roll < 0) {
+      selectedRarity = rarity;
+      break;
+    }
+  }
+
+  const possibleBalls = availableBalls.filter(
+    name => balls[name] === selectedRarity
+  );
+
+  return possibleBalls[
+    Math.floor(Math.random() * possibleBalls.length)
+  ];
+}
+
 const collections = {};
 const activeSpawns = new Map();
 const testSpawns = new Set();
@@ -494,10 +537,8 @@ client.on("messageCreate", async message => {
   
   if (messagesUntilSpawn <= 0 && !hasRealSpawn() && !autoSpawnInProgress) {
     autoSpawnInProgress = true;
-  const availableBalls = Object.keys(flagCodes);
-const selectedBall =
-  availableBalls[Math.floor(Math.random() * availableBalls.length)];
-
+ const selectedBall = pickWeightedBall()
+    
   const catchButton = new ButtonBuilder()
     .setCustomId("catch_ball")
     .setLabel("Catch")
