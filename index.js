@@ -12,6 +12,8 @@ const {
   TextInputStyle
 } = require("discord.js");
 
+const { createClient } = require("@libsql/client");
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
