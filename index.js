@@ -607,7 +607,8 @@ const customArt = {
   "Saudi Arabia": "./saudi-arabia.png",
   "Algeria": "./algeria.png",
   "Morocco": "./morocco.png",
-  "Soviet Union": "./soviet-union.png"
+  "Soviet Union": "./soviet-union.png",
+  "Desert Rivals": "./desert rivals.png"
 };
 
 const ballAliases = {
