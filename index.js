@@ -848,6 +848,23 @@ client.on("interactionCreate", async interaction => {
 );
   }
 
+if (interaction.commandName === "previewball") {
+  const countryball = interaction.options.getString("countryball");
+
+  const art = customArt[countryball];
+
+  if (!art) {
+    return interaction.reply(
+      "This country ball doesn't have an art yet!"
+    );
+  }
+
+  return interaction.reply({
+    content: `This is the present art of ${countryball}`,
+    files: [art]
+  });
+}
+  
   if (interaction.commandName === "dbtest") {
   try {
     const result = await tursoQuery("SELECT 1");
@@ -1138,6 +1155,16 @@ const commands = [
   }
 )
   )
+
+  new SlashCommandBuilder()
+  .setName("previewball")
+  .setDescription("Preview the current art of a countryball")
+  .addStringOption(option =>
+    option
+      .setName("countryball")
+      .setDescription("The countryball you want to preview")
+      .setRequired(true)
+  ),
   
 ].map(command => command.toJSON());
 
