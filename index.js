@@ -615,13 +615,6 @@ function hasRealSpawn() {
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
 
- const spawnChannels = [
-  "1546803046053576704",
-  "1527808233366880277"
-];
-
-if (!spawnChannels.includes(message.channel.id)) return;
-
   if (message.content === "!dbtest") {
   try {
     await tursoQuery("SELECT 1");
