@@ -603,8 +603,9 @@ const flagCodes = {
 
 const customArt = {
   "Turkey": "./turkey.png",
+  "Saudi Arabia": "./saudi-arabia.png",
   "Algeria": "./algeria.png",
-  "Morocco": "./morocco.png",
+  "Morocco": "./morocco.png"
 };
 
 const rarityWeights = {
