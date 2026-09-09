@@ -176,7 +176,7 @@ const balls = {
 "Botswana": "Common",
 "Burkina Faso": "Common",
 "Burundi": "Common",
-"Cabo Verde": "Common",
+"Cape Verde": "Rare",
 "Cameroon": "Common",
 "Chad": "Common",
 "Comoros": "Common",
@@ -279,7 +279,7 @@ const balls = {
 "Uzbekistan": "Rare",
 "Thailand": "Rare",
 "Azerbaijan": "Rare",
-"Georgia": "Rare",
+"Georgia": "Common",
 "Kyrgyzstan": "Rare",
 "Mongolia": "Rare",
 "Philippines": "Rare",
@@ -299,7 +299,7 @@ const balls = {
 "Timor-Leste": "Common",
 "Saudi Arabia": "Legendary",
 "Palestine": "Legendary",
-"UAE": "Legendary",
+"United Arab Emirates": "Legendary",
 "Iran": "Legendary",
 "Iraq": "Rare",
 "Syria": "Rare",
@@ -366,7 +366,7 @@ const balls = {
 "Antarctica": "Legendary",
 "Almohad Caliphate": "Superpower",
 "Dacian Kingdom": "Legendary",
-  "USA": "Superpower",
+  "United States of America": "Superpower",
   "China": "Superpower",
   "India": "Superpower",
   "Russia": "Superpower",
@@ -486,7 +486,7 @@ const flagCodes = {
 "Timor-Leste": "tl",
   "Saudi Arabia": "sa",
 "Palestine": "ps",
-"UAE": "ae",
+"United Arab Emirates": "ae",
 "Iran": "ir",
 "Iraq": "iq",
 "Syria": "sy",
@@ -503,7 +503,7 @@ const flagCodes = {
 "Tunisia": "tn",
 "South Africa": "za",
 "Central African Republic": "cf",
-"DR Congo": "cd",
+"Democratic Republic of the Congo": "cd",
 "Namibia": "na",
 "Niger": "ne",
 "Libya": "ly",
@@ -511,7 +511,7 @@ const flagCodes = {
 "Botswana": "bw",
 "Burkina Faso": "bf",
 "Burundi": "bi",
-"Cabo Verde": "cv",
+"Cape Verde": "cv",
 "Cameroon": "cm",
 "Chad": "td",
 "Comoros": "km",
@@ -549,7 +549,7 @@ const flagCodes = {
 "Zambia": "zm",
 "Zimbabwe": "zw",
   "Morocco": "ma",
-  "USA": "us",
+  "United States of America": "us",
 "Brazil": "br",
 "Mexico": "mx",
 "Canada": "ca",
@@ -606,6 +606,41 @@ const customArt = {
   "Saudi Arabia": "./saudi-arabia.png",
   "Algeria": "./algeria.png",
   "Morocco": "./morocco.png"
+};
+
+const ballAliases = {
+  "Democratic Republic of the Congo": [
+    "DR Congo",
+    "Democratic Republic of Congo"
+  ],
+
+  "United States of America": [
+    "United States"
+  ],
+
+  "United Kingdom": [
+    "Britain",
+    "Great Britain"
+  ],
+  
+  "Turkey": [
+    "Turkiye"
+  ],
+  
+  "Nauru": [
+    "Naoero"
+  ],
+
+  "Cape Verde": [
+    "Cabo Verde"
+  ],
+
+  "Myanmar": [
+    "Burma"
+  ],
+  "Timor-Leste": [
+    "East Timor"
+  ]
 };
 
 const rarityWeights = {
@@ -848,7 +883,16 @@ const currentBall = activeSpawns.get(spawnMessageId);
 
   const guess = interaction.fields.getTextInputValue("ball_guess").trim();
 
-  if (guess.toLowerCase() === currentBall.toLowerCase()) {
+  const acceptedAnswers = [
+  currentBall,
+  ...(ballAliases[currentBall] || [])
+];
+
+if (
+  acceptedAnswers.some(
+    answer => guess.toLowerCase() === answer.toLowerCase()
+  )
+) {
     if (!activeSpawns.has(spawnMessageId)) {
   return interaction.reply({
     content: `${interaction.user}, this ball was already caught!`
