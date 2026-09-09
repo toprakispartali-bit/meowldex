@@ -37,6 +37,39 @@ setupDatabase().catch(error => {
 });
 
 */
+async function tursoQuery(sql, args = []) {
+  const response = await fetch(
+    process.env.TURSO_DATABASE_URL.replace("libsql://", "https://") + "/v2/pipeline",
+    {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.TURSO_AUTH_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        requests: [
+          {
+            type: "execute",
+            stmt: {
+              sql,
+              args
+            }
+          },
+          {
+            type: "close"
+          }
+        ]
+      })
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Turso error: ${response.status} ${await response.text()}`);
+  }
+
+  return response.json();
+}
+
 
 const client = new Client({
   intents: [
