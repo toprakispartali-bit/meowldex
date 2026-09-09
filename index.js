@@ -167,7 +167,7 @@ const balls = {
 "South Africa": "Rare",
 "Central African Republic": "Rare",
 
-"DR Congo": "Uncommon",
+"Democratic Republic of the Congo": "Uncommon",
 "Namibia": "Uncommon",
 "Niger": "Uncommon",
 "Libya": "Uncommon",
