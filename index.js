@@ -731,7 +731,7 @@ const spawnMessage = await spawnChannel.send({
     console.log("Could not delete expired spawn:", error.message);
   }
 
-  console.log("Ball despawned after 4 minutes:", spawnMessage.id);
+  console.log("Ball despawned after a long time:", spawnMessage.id);
 }, 4 * 60 * 1000);
     
 autoSpawnInProgress = false;
