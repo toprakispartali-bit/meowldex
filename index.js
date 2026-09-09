@@ -561,6 +561,15 @@ messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
 }
 });
 
+client.on("messageDelete", message => {
+  if (activeSpawns.has(message.id)) {
+    activeSpawns.delete(message.id);
+    testSpawns.delete(message.id);
+
+    console.log("Deleted spawn cleaned up:", message.id);
+  }
+});
+
 client.on("interactionCreate", async interaction => {
 
   if (interaction.commandName === "rarity") {
