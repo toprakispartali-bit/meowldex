@@ -600,6 +600,11 @@ const testSpawns = new Set();
 let messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
 let autoSpawnInProgress = false;
 
+const spawnChannelByGuild = {
+  "1538863607474028554": "1546803046053576704",
+  "1527806660129591497": "1527808233366880277"
+};
+
 function hasRealSpawn() {
   for (const id of activeSpawns.keys()) {
     if (!testSpawns.has(id)) return true;
@@ -647,7 +652,13 @@ if (!spawnChannels.includes(message.channel.id)) return;
 
   const row = new ActionRowBuilder().addComponents(catchButton);
 
-  const spawnMessage = await message.channel.send({
+  const spawnChannelId = spawnChannelByGuild[message.guild.id];
+if (!spawnChannelId) return;
+
+const spawnChannel = await client.channels.fetch(spawnChannelId);
+if (!spawnChannel) return;
+
+const spawnMessage = await spawnChannel.send({
     content: "A wild country ball appeared!",
     files: [
   customArt[selectedBall] ||
