@@ -824,6 +824,14 @@ if (!isTest) {
   }
 
   collections[userId].push(currentBall);
+  
+  await tursoQuery(
+  `INSERT INTO collections (user_id, ball_name, quantity)
+   VALUES (?, ?, 1)
+   ON CONFLICT(user_id, ball_name)
+   DO UPDATE SET quantity = quantity + 1`,
+  [userId, currentBall]
+);
 }
     
     testSpawns.delete(spawnMessageId);
