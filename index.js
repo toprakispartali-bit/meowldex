@@ -50,10 +50,13 @@ async function tursoQuery(sql, args = []) {
         requests: [
           {
             type: "execute",
-            stmt: {
-              sql,
-              args
-            }
+           stmt: {
+  sql,
+  args: args.map(value => ({
+    type: "text",
+    value: String(value)
+  }))
+}
           },
           {
             type: "close"
@@ -617,8 +620,14 @@ client.on("messageCreate", async message => {
 
   if (message.content === "!dbtest") {
   try {
-    await tursoQuery("SELECT 1");
-    await message.reply("✅ Database connection works!");
+    await tursoQuery(
+  `INSERT INTO collections (user_id, ball_name, quantity)
+   VALUES (?, ?, 1)
+   ON CONFLICT(user_id, ball_name)
+   DO UPDATE SET quantity = quantity + 1`,
+  [message.author.id, "Russia"]
+);
+    await message.reply("✅ Russia refunded to your collection! 🇷🇺");
   } catch (error) {
     await message.reply(
       `❌ Database error: ${error.message.slice(0, 1500)}`
@@ -837,16 +846,35 @@ if (!isTest) {
   
 if (interaction.commandName === "collection") {
   const userId = interaction.user.id;
-  const collection = collections[userId] || [];
 
-  if (collection.length === 0) {
+  const data = await tursoQuery(
+    `SELECT ball_name, quantity
+     FROM collections
+     WHERE user_id = ?
+     ORDER BY ball_name`,
+    [userId]
+  );
+
+  const rows =
+    data.results?.[0]?.response?.result?.rows || [];
+
+  if (rows.length === 0) {
     return interaction.reply(
       `📚 **${interaction.user.username}'s MeowlDex Collection**\n\n` +
       `You haven't caught any balls yet!`
     );
   }
 
-  interaction.reply(
+  const collection = rows.map(row => {
+    const ballName = row[0].value;
+    const quantity = row[1].value;
+
+    return quantity > 1
+      ? `${ballName} ×${quantity}`
+      : ballName;
+  });
+
+  return interaction.reply(
     `📚 **${interaction.user.username}'s MeowlDex Collection**\n\n` +
     collection.join("\n")
   );
