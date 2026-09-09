@@ -662,9 +662,6 @@ const spawnMultipliers = {
 function pickWeightedBall() {
   const availableBalls = Object.keys(balls).filter(
   name => flagCodes[name] || customArt[name]
-
-  const availableBalls = Object.keys(balls).filter(
-  name => flagCodes[name] || customArt[name]
 );
 
   const totalWeight = availableRarities.reduce(
