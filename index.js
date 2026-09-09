@@ -12,7 +12,7 @@ const {
   TextInputStyle
 } = require("discord.js");
 
-const { createClient } = require("@tursodatabase/serverless/compat");
+// const { createClient } = require("@tursodatabase/serverless/compat");
 
 /* const db = createClient({
   url: process.env.TURSO_DATABASE_URL,
