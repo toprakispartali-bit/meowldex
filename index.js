@@ -684,7 +684,9 @@ function hasRealSpawn() {
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
 
+  if (!hasRealSpawn() && !autoSpawnInProgress) {
   messagesUntilSpawn--;
+}
 
   console.log(
   `Messages: ${messagesUntilSpawn} | Real spawn: ${hasRealSpawn()} | In progress: ${autoSpawnInProgress}`
@@ -716,6 +718,22 @@ const spawnMessage = await spawnChannel.send({
     components: [row]
   });
     activeSpawns.set(spawnMessage.id, selectedBall);
+    
+    setTimeout(async () => {
+  if (!activeSpawns.has(spawnMessage.id)) return;
+  if (testSpawns.has(spawnMessage.id)) return;
+
+  activeSpawns.delete(spawnMessage.id);
+
+  try {
+    await spawnMessage.delete();
+  } catch (error) {
+    console.log("Could not delete expired spawn:", error.message);
+  }
+
+  console.log("Ball despawned after 4 minutes:", spawnMessage.id);
+}, 4 * 60 * 1000);
+    
 autoSpawnInProgress = false;
 
 messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
@@ -926,8 +944,8 @@ const recipe = craftRecipes[recipeName];
 await tursoTransaction([
   ...recipe.ingredients.map(ball => ({
     sql: `UPDATE collections
-          SET quantity = quantity - 1
-          WHERE user_id = ? AND ball_name = ?`,
+SET quantity = quantity - 1
+WHERE user_id = ? AND ball_name = ?`,
     args: [userId, ball]
   })),
 
