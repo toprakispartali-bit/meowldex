@@ -946,7 +946,7 @@ await tursoTransaction([
   }
 ]);
 
-rreturn interaction.reply(
+return interaction.reply(
   `🛠️ **CRAFT SUCCESSFUL!**\n\n` +
   `${recipe.ingredients.join(" + ")} → **${recipe.result}** ✨`
 );
