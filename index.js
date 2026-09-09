@@ -65,9 +65,63 @@ async function tursoQuery(sql, args = []) {
       })
     }
   );
-
+  
   if (!response.ok) {
     throw new Error(`Turso error: ${response.status} ${await response.text()}`);
+  }
+
+  return response.json();
+}
+
+async function tursoTransaction(statements) {
+  const url =
+    process.env.TURSO_DATABASE_URL.replace("libsql://", "https://") +
+    "/v2/pipeline";
+
+  const requests = [
+    {
+      type: "execute",
+      stmt: {
+        sql: "BEGIN"
+      }
+    },
+
+    ...statements.map(statement => ({
+      type: "execute",
+      stmt: {
+        sql: statement.sql,
+        args: (statement.args || []).map(value => ({
+          type: "text",
+          value: String(value)
+        }))
+      }
+    })),
+
+    {
+      type: "execute",
+      stmt: {
+        sql: "COMMIT"
+      }
+    },
+
+    {
+      type: "close"
+    }
+  ];
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.TURSO_AUTH_TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ requests })
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Turso transaction error: ${response.status} ${await response.text()}`
+    );
   }
 
   return response.json();
@@ -608,6 +662,13 @@ const spawnChannelByGuild = {
   "1527806660129591497": "1527808233366880277"
 };
 
+const craftRecipes = {
+  "desert rivals": {
+    ingredients: ["Morocco", "Algeria"],
+    result: "Desert Rivals"
+  }
+};
+
 function hasRealSpawn() {
   for (const id of activeSpawns.keys()) {
     if (!testSpawns.has(id)) return true;
@@ -824,6 +885,70 @@ if (!isTest) {
     });
   }
 }
+
+  if (interaction.commandName === "craft") {
+  const userId = interaction.user.id;
+
+  const data = await tursoQuery(
+    `SELECT ball_name, quantity
+     FROM collections
+     WHERE user_id = ?`,
+    [userId]
+  );
+
+  const rows =
+    data.results?.[0]?.response?.result?.rows || [];
+
+  const owned = {};
+
+  for (const row of rows) {
+    owned[row[0].value] = Number(row[1].value);
+  }
+
+  const recipe = craftRecipes["desert rivals"];
+
+  const hasIngredients = recipe.ingredients.every(
+    ball => (owned[ball] || 0) >= 1
+  );
+
+  if (!hasIngredients) {
+    return interaction.reply(
+      `🛠️ You need **Morocco + Algeria** to craft **Desert Rivals**!`
+    );
+  }
+
+await tursoTransaction([
+  {
+    sql: `UPDATE collections
+          SET quantity = quantity - 1
+          WHERE user_id = ? AND ball_name = ?`,
+    args: [userId, "Morocco"]
+  },
+  {
+    sql: `UPDATE collections
+          SET quantity = quantity - 1
+          WHERE user_id = ? AND ball_name = ?`,
+    args: [userId, "Algeria"]
+  },
+  {
+    sql: `DELETE FROM collections
+          WHERE user_id = ? AND quantity <= 0`,
+    args: [userId]
+  },
+  {
+    sql: `INSERT INTO collections (user_id, ball_name, quantity)
+          VALUES (?, ?, 1)
+          ON CONFLICT(user_id, ball_name)
+          DO UPDATE SET quantity = quantity + 1`,
+    args: [userId, "Desert Rivals"]
+  }
+]);
+
+return interaction.reply(
+  `🛠️ **CRAFT SUCCESSFUL!**\n\n` +
+  `🇲🇦 Morocco + 🇩🇿 Algeria → **Desert Rivals** ✨`
+);
+}
   
 if (interaction.commandName === "collection") {
   const userId = interaction.user.id;
@@ -884,6 +1009,10 @@ const commands = [
   new SlashCommandBuilder()
     .setName("spawn")
     .setDescription("Spawns a test MeowlDex ball"),
+
+  new SlashCommandBuilder()
+  .setName("craft")
+  .setDescription("Craft special MeowlDex balls")
   
 ].map(command => command.toJSON());
 
