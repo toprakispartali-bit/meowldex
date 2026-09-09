@@ -8,6 +8,6 @@
   },
   "dependencies": {
   "discord.js": "^14.21.0",
-  "@libsql/client": "^0.15.15"
+  "@tursodatabase/serverless": "^0.1.0"
   }
 }
