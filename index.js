@@ -32,7 +32,9 @@ async function setupDatabase() {
   console.log("MeowlDex database ready!");
 }
 
-setupDatabase();
+setupDatabase().catch(error => {
+  console.error("DATABASE ERROR:", error);
+});
 
 const client = new Client({
   intents: [
