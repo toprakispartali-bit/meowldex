@@ -70,6 +70,22 @@ async function tursoQuery(sql, args = []) {
   return response.json();
 }
 
+async function setupTursoDatabase() {
+  await tursoQuery(`
+    CREATE TABLE IF NOT EXISTS collections (
+      user_id TEXT NOT NULL,
+      ball_name TEXT NOT NULL,
+      quantity INTEGER NOT NULL DEFAULT 1,
+      PRIMARY KEY (user_id, ball_name)
+    )
+  `);
+
+  console.log("MeowlDex database ready!");
+}
+
+setupTursoDatabase().catch(error => {
+  console.error("DATABASE ERROR:", error);
+});
 
 const client = new Client({
   intents: [
