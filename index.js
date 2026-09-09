@@ -551,12 +551,12 @@ const customArt = {
 };
 
 const rarityWeights = {
-  "Common": 50,
-  "Uncommon": 25,
+  "Common": 49,
+  "Uncommon": 24,
   "Rare": 15,
   "Legendary": 7,
-  "Mythic": 2,
-  "Superpower": 1,
+  "Mythic": 3,
+  "Superpower": 2,
   "Ancient": 1,
 };
 
@@ -610,7 +610,12 @@ function hasRealSpawn() {
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
 
-  if (message.channel.id !== "1546803046053576704") return;
+ const spawnChannels = [
+  "1546803046053576704",
+  "1527808233366880277"
+];
+
+if (!spawnChannels.includes(message.channel.id)) return;
 
   if (message.content === "!dbtest") {
   try {
