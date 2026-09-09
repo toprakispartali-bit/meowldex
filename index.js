@@ -610,6 +610,19 @@ function hasRealSpawn() {
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
 
+  if (message.content === "!dbtest") {
+  try {
+    await tursoQuery("SELECT 1");
+    await message.reply("✅ Database connection works!");
+  } catch (error) {
+    await message.reply(
+      `❌ Database error: ${error.message.slice(0, 1500)}`
+    );
+  }
+
+  return;
+}
+
   messagesUntilSpawn--;
 
   console.log(
@@ -855,7 +868,7 @@ const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 (async () => {
   try {
     await rest.put(
-      Routes.applicationGuildCommands("1546632087430373416", "1527806660129591497"),
+     Routes.applicationGuildCommands("1546632087430373416", "1527806660129591497"),
       { body: commands }
     );
     console.log("Commands registered successfully!");
