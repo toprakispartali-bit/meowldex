@@ -294,7 +294,9 @@ client.on("messageCreate", async message => {
 
   messagesUntilSpawn--;
 
-  console.log(`Messages until spawn: ${messagesUntilSpawn}`);
+  console.log(
+  `Messages: ${messagesUntilSpawn} | Real spawn: ${hasRealSpawn()} | In progress: ${autoSpawnInProgress}`
+);
   
   if (messagesUntilSpawn <= 0 && !hasRealSpawn() && !autoSpawnInProgress) {
     autoSpawnInProgress = true;
