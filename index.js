@@ -19,6 +19,21 @@ const db = createClient({
   authToken: process.env.TURSO_AUTH_TOKEN
 });
 
+async function setupDatabase() {
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS collections (
+      user_id TEXT NOT NULL,
+      ball_name TEXT NOT NULL,
+      quantity INTEGER NOT NULL DEFAULT 1,
+      PRIMARY KEY (user_id, ball_name)
+    )
+  `);
+
+  console.log("MeowlDex database ready!");
+}
+
+setupDatabase();
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
