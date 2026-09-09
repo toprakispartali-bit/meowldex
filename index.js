@@ -83,9 +83,13 @@ async function setupTursoDatabase() {
   console.log("MeowlDex database ready!");
 }
 
-setupTursoDatabase().catch(error => {
-  console.error("DATABASE ERROR:", error);
-});
+setupTursoDatabase()
+  .then(() => {
+    console.log("DATABASE SETUP SUCCESS");
+  })
+  .catch(error => {
+    console.error("DATABASE ERROR:", error.message);
+  });
 
 const client = new Client({
   intents: [
