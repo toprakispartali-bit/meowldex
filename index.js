@@ -401,7 +401,8 @@ const balls = {
 "Mycenaean Greece": "Ancient",
 "Maya Civilization": "Ancient",
 "Aztec Empire": "Ancient",
-"Inca Empire": "Ancient"
+"Inca Empire": "Ancient",
+  "Desert Rivals": "CraftBall"
 };
 
 const flagCodes = {
@@ -608,7 +609,7 @@ const customArt = {
   "Algeria": "./algeria.png",
   "Morocco": "./morocco.png",
   "Soviet Union": "./soviet-union.png",
-  "Desert Rivals": "./desert rivals.png"
+  "Desert Rivals": "./desert-rivals.png"
 };
 
 const ballAliases = {
