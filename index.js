@@ -467,6 +467,8 @@ const flagCodes = {
 
 const customArt = {
   "Turkey": "./turkey.png",
+  "Algeria": "./algeria.png",
+  "Morocco": "./morocco.png",
 };
 
 const rarityWeights = {
