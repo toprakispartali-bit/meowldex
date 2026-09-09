@@ -674,6 +674,22 @@ client.on("interactionCreate", async interaction => {
 );
   }
 
+  if (interaction.commandName === "dbtest") {
+  try {
+    const result = await tursoQuery("SELECT 1");
+
+    await interaction.reply(
+      "✅ Database connection works!"
+    );
+
+    console.log("DB TEST:", result);
+  } catch (error) {
+    await interaction.reply(
+      `❌ Database error: ${error.message.slice(0, 1500)}`
+    );
+  }
+}
+
 if (interaction.commandName === "spawn") {
   const selectedBall = "Turkey";
 
@@ -826,7 +842,12 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName("spawn")
-    .setDescription("Spawns a test MeowlDex ball")
+    .setDescription("Spawns a test MeowlDex ball"),
+
+  new SlashCommandBuilder()
+  .setName("dbtest")
+  .setDescription("Tests the MeowlDex database")
+  
 ].map(command => command.toJSON());
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
