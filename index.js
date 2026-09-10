@@ -136,7 +136,7 @@ const balls = {
 "Uzbekistan": "Rare",
 "Thailand": "Rare",
 "Azerbaijan": "Rare",
-"Georgia": "Common",
+"Georgia": "Rare",
 "Kyrgyzstan": "Rare",
 "Mongolia": "Rare",
 "Philippines": "Rare",
