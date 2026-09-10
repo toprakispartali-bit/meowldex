@@ -12,149 +12,6 @@ const {
   TextInputStyle
 } = require("discord.js");
 
-// const { createClient } = require("@tursodatabase/serverless/compat");
-
-/* const db = createClient({
-  url: process.env.TURSO_DATABASE_URL,
-  authToken: process.env.TURSO_AUTH_TOKEN
-});
-
-async function setupDatabase() {
-  await db.execute(`
-    CREATE TABLE IF NOT EXISTS collections (
-      user_id TEXT NOT NULL,
-      ball_name TEXT NOT NULL,
-      quantity INTEGER NOT NULL DEFAULT 1,
-      PRIMARY KEY (user_id, ball_name)
-    )
-  `);
-
-  console.log("MeowlDex database ready!");
-}
-
-setupDatabase().catch(error => {
-  console.error("DATABASE ERROR:", error);
-});
-
-*/
-async function tursoQuery(sql, args = []) {
-  const response = await fetch(
-    process.env.TURSO_DATABASE_URL.replace("libsql://", "https://") + "/v2/pipeline",
-    {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.TURSO_AUTH_TOKEN}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        requests: [
-          {
-            type: "execute",
-           stmt: {
-  sql,
-  args: args.map(value => ({
-    type: "text",
-    value: String(value)
-  }))
-}
-          },
-          {
-            type: "close"
-          }
-        ]
-      })
-    }
-  );
-  
-  if (!response.ok) {
-    throw new Error(`Turso error: ${response.status} ${await response.text()}`);
-  }
-
-  return response.json();
-}
-
-async function tursoTransaction(statements) {
-  const url =
-    process.env.TURSO_DATABASE_URL.replace("libsql://", "https://") +
-    "/v2/pipeline";
-
-  const requests = [
-    {
-      type: "execute",
-      stmt: {
-        sql: "BEGIN"
-      }
-    },
-
-    ...statements.map(statement => ({
-      type: "execute",
-      stmt: {
-        sql: statement.sql,
-        args: (statement.args || []).map(value => ({
-          type: "text",
-          value: String(value)
-        }))
-      }
-    })),
-
-    {
-      type: "execute",
-      stmt: {
-        sql: "COMMIT"
-      }
-    },
-
-    {
-      type: "close"
-    }
-  ];
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.TURSO_AUTH_TOKEN}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ requests })
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `Turso transaction error: ${response.status} ${await response.text()}`
-    );
-  }
-
-  return response.json();
-}
-
-async function setupTursoDatabase() {
-  await tursoQuery(`
-    CREATE TABLE IF NOT EXISTS collections (
-      user_id TEXT NOT NULL,
-      ball_name TEXT NOT NULL,
-      quantity INTEGER NOT NULL DEFAULT 1,
-      PRIMARY KEY (user_id, ball_name)
-    )
-  `);
-
-  console.log("MeowlDex database ready!");
-}
-
-setupTursoDatabase()
-  .then(() => {
-    console.log("DATABASE SETUP SUCCESS");
-  })
-  .catch(error => {
-    console.error("DATABASE ERROR:", error.message);
-  });
-
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
-  ]
-});
 
 const balls = {
   "Turkey": "Legendary",
@@ -615,6 +472,7 @@ const customArt = {
 const ballAliases = {
   "Democratic Republic of the Congo": [
     "DR Congo",
+    "DRC",
     "Democratic Republic of Congo"
   ],
 
@@ -661,58 +519,6 @@ const spawnMultipliers = {
   "Soviet Union": 0.35
 };
 
-function pickWeightedBall() {
-  const availableBalls = Object.keys(balls).filter(
-    name => flagCodes[name] || customArt[name]
-  );
-
-  const availableRarities = [
-    ...new Set(availableBalls.map(name => balls[name]))
-  ];
-
-  const totalWeight = availableRarities.reduce(
-    (sum, rarity) => sum + rarityWeights[rarity],
-    0
-  );
-
-  let roll = Math.random() * totalWeight;
-  let selectedRarity;
-
-  for (const rarity of availableRarities) {
-    roll -= rarityWeights[rarity];
-
-    if (roll < 0) {
-      selectedRarity = rarity;
-      break;
-    }
-  }
-
-  const possibleBalls = availableBalls.filter(
-    name => balls[name] === selectedRarity
-  );
-
-  const weightedBalls = [];
-
-for (const ball of possibleBalls) {
-  const multiplier = spawnMultipliers[ball] ?? 1;
-  const tickets = Math.max(1, Math.round(multiplier * 100));
-
-  for (let i = 0; i < tickets; i++) {
-    weightedBalls.push(ball);
-  }
-}
-
-return weightedBalls[
-  Math.floor(Math.random() * weightedBalls.length)
-];
-}
-
-const collections = {};
-const activeSpawns = new Map();
-const testSpawns = new Set();
-
-let messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
-let autoSpawnInProgress = false;
 
 const spawnChannelByGuild = {
   "1538863607474028554": "1546803046053576704",
@@ -752,366 +558,454 @@ const craftRecipes = {
 }
 };
 
-function hasRealSpawn() {
-  for (const id of activeSpawns.keys()) {
-    if (!testSpawns.has(id)) return true;
-  }
-  return false;
+
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
+});
+const SPAWN_LIFETIME = 4 * 60 * 1000;
+const expiryTimers = new Map();
+let messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
+let autoSpawnInProgress = false;
+
+function statement(sql, args = []) {
+  return { sql, args: args.map(value => ({ type: 'text', value: String(value) })), want_rows: true };
 }
 
-client.on("messageCreate", async message => {
-  if (message.author.bot) return;
-
-  if (!hasRealSpawn() && !autoSpawnInProgress) {
-  messagesUntilSpawn--;
-}
-
-  console.log(
-  `Messages: ${messagesUntilSpawn} | Real spawn: ${hasRealSpawn()} | In progress: ${autoSpawnInProgress}`
-);
-  
-  if (messagesUntilSpawn <= 0 && !hasRealSpawn() && !autoSpawnInProgress) {
-    autoSpawnInProgress = true;
- const selectedBall = pickWeightedBall()
-    
-  const catchButton = new ButtonBuilder()
-    .setCustomId("catch_ball")
-    .setLabel("Catch")
-    .setStyle(ButtonStyle.Primary);
-
-  const row = new ActionRowBuilder().addComponents(catchButton);
-
-  const spawnChannelId = spawnChannelByGuild[message.guild.id];
-if (!spawnChannelId) return;
-
-const spawnChannel = await client.channels.fetch(spawnChannelId);
-if (!spawnChannel) return;
-
-const spawnMessage = await spawnChannel.send({
-    content: "A wild country ball appeared!",
-    files: [
-  customArt[selectedBall] ||
-  `https://flagcdn.com/w320/${flagCodes[selectedBall]}.png`
-],
-    components: [row]
+async function databaseRequest(request) {
+  const url = process.env.TURSO_DATABASE_URL.replace('libsql://', 'https://').replace(/\/$/, '') + '/v2/pipeline';
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${process.env.TURSO_AUTH_TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requests: [request, { type: 'close' }] })
   });
-    activeSpawns.set(spawnMessage.id, selectedBall);
-    
-    setTimeout(async () => {
-  if (!activeSpawns.has(spawnMessage.id)) return;
-  if (testSpawns.has(spawnMessage.id)) return;
+  if (!response.ok) throw new Error(`Database HTTP error: ${response.status}`);
+  const data = await response.json();
+  const result = data.results?.[0];
+  if (result?.type !== 'ok' || !result.response?.result) {
+    throw new Error(result?.error?.message || 'Database returned no result.');
+  }
+  return result.response.result;
+}
 
-  activeSpawns.delete(spawnMessage.id);
+async function query(sql, args = []) {
+  return databaseRequest({ type: 'execute', stmt: statement(sql, args) });
+}
 
+// Each step runs only after the previous step succeeds. Any failed step rolls back.
+async function transaction(statements) {
+  const steps = [{ stmt: statement('BEGIN IMMEDIATE') }];
+  for (const item of statements) {
+    steps.push({ condition: { type: 'ok', step: steps.length - 1 }, stmt: item });
+  }
+  const commitIndex = steps.length;
+  steps.push({ condition: { type: 'ok', step: commitIndex - 1 }, stmt: statement('COMMIT') });
+  steps.push({
+    condition: { type: 'and', conds: [
+      { type: 'ok', step: 0 },
+      { type: 'not', cond: { type: 'ok', step: commitIndex } }
+    ] },
+    stmt: statement('ROLLBACK')
+  });
+  const batch = await databaseRequest({ type: 'batch', batch: { steps } });
+  if (!batch.step_results?.[commitIndex] || batch.step_errors?.some(Boolean)) {
+    throw new Error(batch.step_errors?.find(Boolean)?.message || 'Transaction was not confirmed.');
+  }
+  return batch.step_results.slice(1, commitIndex);
+}
+
+async function setupTursoDatabase() {
+  await query(`CREATE TABLE IF NOT EXISTS collections (
+    user_id TEXT NOT NULL, ball_name TEXT NOT NULL,
+    quantity INTEGER NOT NULL DEFAULT 1, PRIMARY KEY (user_id, ball_name)
+  )`);
+  await query(`CREATE TABLE IF NOT EXISTS active_spawns (
+    message_id TEXT PRIMARY KEY, ball_name TEXT NOT NULL,
+    is_test INTEGER NOT NULL DEFAULT 0, expires_at INTEGER NOT NULL,
+    channel_id TEXT NOT NULL DEFAULT ''
+  )`);
+  const info = await query('PRAGMA table_info(active_spawns)');
+  if (!info.rows.some(row => row[1].value === 'channel_id')) {
+    await query("ALTER TABLE active_spawns ADD COLUMN channel_id TEXT NOT NULL DEFAULT ''");
+  }
+  console.log('MeowlDex database ready!');
+}
+
+function normalize(text) {
+  return String(text).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+function allBallNames() {
+  return [...new Set([...Object.keys(balls), ...Object.values(craftRecipes).map(recipe => recipe.result)])];
+}
+
+function resolveBall(input, names = allBallNames()) {
+  return names.find(name => [name, ...(ballAliases[name] || [])].some(alias => normalize(alias) === normalize(input)));
+}
+
+function suggestions(names, input) {
+  const search = normalize(input);
+  function score(text) {
+    const name = normalize(text);
+    if (!search || name.startsWith(search)) return 0;
+    if (name.includes(search)) return 1;
+    let position = 0;
+    for (const letter of name) {
+      if (letter === search[position]) position++;
+      if (position === search.length) return name.startsWith(search[0]) ? 2 : 2.5;
+    }
+    return 3;
+  }
+  return [...new Set(names)].map(name => ({ name,
+    score: Math.min(...[name, ...(ballAliases[name] || [])].map(score))
+  })).filter(item => item.score < 3)
+    .sort((a, b) => a.score - b.score || a.name.localeCompare(b.name))
+    .slice(0, 25).map(item => ({ name: item.name.slice(0, 100), value: item.name }));
+}
+
+function pickWeightedBall() {
+  const available = Object.keys(balls).filter(name =>
+    (flagCodes[name] || customArt[name]) &&
+    Number.isFinite(rarityWeights[balls[name]]) && rarityWeights[balls[name]] > 0
+  );
+  if (!available.length) throw new Error('No balls have both an image and a spawn weight.');
+  const rarities = [...new Set(available.map(name => balls[name]))];
+  let roll = Math.random() * rarities.reduce((sum, rarity) => sum + rarityWeights[rarity], 0);
+  let chosenRarity = rarities[rarities.length - 1];
+  for (const rarity of rarities) {
+    roll -= rarityWeights[rarity];
+    if (roll < 0) { chosenRarity = rarity; break; }
+  }
+  const pool = available.filter(name => balls[name] === chosenRarity);
+  const weight = name => Math.max(1, Math.round((spawnMultipliers[name] ?? 1) * 100));
+  roll = Math.random() * pool.reduce((sum, name) => sum + weight(name), 0);
+  for (const name of pool) {
+    roll -= weight(name);
+    if (roll < 0) return name;
+  }
+  return pool[pool.length - 1];
+}
+
+function catchRow(disabled = false, label = 'Catch') {
+  return new ActionRowBuilder().addComponents(new ButtonBuilder()
+    .setCustomId('catch_ball').setLabel(label)
+    .setStyle(disabled ? ButtonStyle.Secondary : ButtonStyle.Primary).setDisabled(disabled));
+}
+
+async function loadSavedSpawn(messageId) {
+  const result = await query(`SELECT ball_name, is_test, expires_at, channel_id
+    FROM active_spawns WHERE message_id = ?`, [messageId]);
+  const row = result.rows[0];
+  if (!row || (Number(row[2].value) !== 0 && Number(row[2].value) <= Date.now())) return null;
+  return { ballName: row[0].value, isTest: Number(row[1].value) === 1,
+    expiresAt: Number(row[2].value), channelId: row[3].value };
+}
+
+async function claimSavedSpawn(messageId, userId, ballName) {
+  const now = Date.now();
+  const results = await transaction([
+    statement(`INSERT INTO collections (user_id, ball_name, quantity)
+      SELECT ?, ball_name, 1 FROM active_spawns
+      WHERE message_id = ? AND ball_name = ? AND is_test = 0
+        AND (expires_at = 0 OR expires_at > ?)
+      ON CONFLICT(user_id, ball_name) DO UPDATE SET quantity = collections.quantity + 1`,
+    [userId, messageId, ballName, now]),
+    statement(`DELETE FROM active_spawns WHERE message_id = ? AND ball_name = ?
+      AND (expires_at = 0 OR expires_at > ?) RETURNING ball_name, is_test`,
+    [messageId, ballName, now])
+  ]);
+  const row = results[1].rows[0];
+  return row ? { ballName: row[0].value, isTest: Number(row[1].value) === 1 } : null;
+}
+
+async function transferBall(sender, recipient, ballName) {
+  if (sender === recipient) throw new Error('Cannot transfer to yourself.');
+  const result = await query(`WITH transfer(user_id, delta) AS (VALUES (?, -1), (?, 1))
+    INSERT INTO collections (user_id, ball_name, quantity)
+    SELECT transfer.user_id, owned.ball_name, transfer.delta
+    FROM collections AS owned CROSS JOIN transfer
+    WHERE owned.user_id = ? AND owned.ball_name = ? AND owned.quantity > 0
+    ON CONFLICT(user_id, ball_name)
+    DO UPDATE SET quantity = collections.quantity + excluded.quantity`,
+  [sender, recipient, sender, ballName]);
+  return Number(result.affected_row_count) === 2;
+}
+
+// Check ingredients and apply all changes in one statement, including during transfers.
+async function craftBall(userId, recipe) {
+  const required = [...new Set(recipe.ingredients)];
+  const deltas = [...required.map(name => [name, -1]), [recipe.result, 1]];
+  const result = await query(`WITH deltas(ball_name, delta) AS (
+      VALUES ${deltas.map(() => '(?, ?)').join(', ')}
+    )
+    INSERT INTO collections (user_id, ball_name, quantity)
+    SELECT ?, deltas.ball_name, CAST(deltas.delta AS INTEGER) FROM deltas
+    WHERE (SELECT COUNT(*) FROM collections WHERE user_id = ? AND quantity > 0
+      AND ball_name IN (${required.map(() => '?').join(', ')})) = CAST(? AS INTEGER)
+    ON CONFLICT(user_id, ball_name)
+    DO UPDATE SET quantity = collections.quantity + excluded.quantity`,
+  [...deltas.flat(), userId, userId, ...required, required.length]);
+  return Number(result.affected_row_count) > 0;
+}
+
+function clearExpiry(messageId) {
+  clearTimeout(expiryTimers.get(messageId));
+  expiryTimers.delete(messageId);
+}
+
+async function expireSpawn(messageId, channelId) {
+  clearExpiry(messageId);
+  const removed = await query(`DELETE FROM active_spawns
+    WHERE message_id = ? AND is_test = 0 AND expires_at <= ? RETURNING message_id`,
+  [messageId, Date.now()]);
+  if (!removed.rows.length) return;
+  if (!channelId) return;
   try {
-    await spawnMessage.delete();
+    const channel = await client.channels.fetch(channelId);
+    await channel.messages.delete(messageId);
   } catch (error) {
-    console.log("Could not delete expired spawn:", error.message);
+    console.error('Could not delete expired spawn message:', error.message);
   }
-
-  console.log("Ball despawned after a long time:", spawnMessage.id);
-}, 4 * 60 * 1000);
-    
-autoSpawnInProgress = false;
-
-messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
 }
-});
 
-client.on("messageDelete", message => {
-  if (activeSpawns.has(message.id)) {
-    activeSpawns.delete(message.id);
-    testSpawns.delete(message.id);
-
-    console.log("Deleted spawn cleaned up:", message.id);
-  }
-});
-
-client.on("interactionCreate", async interaction => {
-
-  if (interaction.commandName === "rarity") {
-    interaction.reply(
-  "🌟 **MeowlDex Rarities** 🌟\n\n" +
-  "⚪ **Common**\n" +
-  "🟢 **Uncommon**\n" +
-  "🔵 **Rare**\n" +
-  "🟣 **Legendary**\n" +
-  "🔴 **Mythic**\n" +
-  "💪 **Superpower**\n" +
-  "🏺 **Ancient**\n\n" +
-  "**Ancient Balls:**\n" +
-  "• Xiongnu\n" +
-  "• Göktürk Khaganate\n" +
-  "• Ancient Egypt\n" +
-  "• Babylon\n" +
-  "• Hittite Empire\n" +
-  "• Assyrian Empire\n" +
-  "• Ancient Greece"
-);
-  }
-
-if (interaction.commandName === "previewball") {
-  const countryball = interaction.options.getString("countryball");
-
-  const art = customArt[countryball];
-
-  if (!art) {
-    return interaction.reply(
-      "This country ball doesn't have an art yet!"
-    );
-  }
-
-  return interaction.reply({
-    content: `This is the present art of ${countryball}`,
-    files: [art]
-  });
+function scheduleExpiry(messageId, channelId, expiresAt) {
+  clearExpiry(messageId);
+  const timer = setTimeout(() => {
+    expireSpawn(messageId, channelId).catch(error => console.error('SPAWN EXPIRY ERROR:', error));
+  }, Math.max(0, expiresAt - Date.now()));
+  timer.unref?.();
+  expiryTimers.set(messageId, timer);
 }
-  
-  if (interaction.commandName === "dbtest") {
+
+async function restoreSpawnTimers() {
+  const saved = await query('SELECT message_id, channel_id, expires_at FROM active_spawns WHERE is_test = 0');
+  for (const row of saved.rows) scheduleExpiry(row[0].value, row[1].value, Number(row[2].value));
+}
+
+async function saveSpawn(message, ballName, isTest) {
+  const expiresAt = isTest ? 0 : Date.now() + SPAWN_LIFETIME;
+  await query(`INSERT INTO active_spawns (message_id, ball_name, is_test, expires_at, channel_id)
+    VALUES (?, ?, ?, ?, ?)`, [message.id, ballName, isTest ? 1 : 0, expiresAt, message.channelId]);
+  if (!isTest) scheduleExpiry(message.id, message.channelId, expiresAt);
+}
+
+client.on('messageCreate', async message => {
+  if (message.author.bot || !message.guild) return;
+  const channelId = spawnChannelByGuild[message.guild.id];
+  if (!channelId || autoSpawnInProgress) return;
+  autoSpawnInProgress = true;
+  let spawnMessage;
   try {
-    const result = await tursoQuery("SELECT 1");
-
-    await interaction.reply(
-      "✅ Database connection works!"
-    );
-
-    console.log("DB TEST:", result);
+    const active = await query('SELECT message_id FROM active_spawns WHERE is_test = 0 AND expires_at > ? LIMIT 1', [Date.now()]);
+    if (active.rows.length) return;
+    messagesUntilSpawn--;
+    if (messagesUntilSpawn > 0) return;
+    const ballName = pickWeightedBall();
+    const channel = await client.channels.fetch(channelId);
+    if (!channel?.isTextBased()) throw new Error('Spawn channel is unavailable.');
+    // Enable Catch only after the record has been saved.
+    spawnMessage = await channel.send({ content: 'A wild country ball appeared!',
+      files: [customArt[ballName] || `https://flagcdn.com/w320/${flagCodes[ballName]}.png`],
+      components: [catchRow(true, 'Preparing…')] });
+    await saveSpawn(spawnMessage, ballName, false);
+    await spawnMessage.edit({ components: [catchRow()] });
+    messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
   } catch (error) {
-    await interaction.reply(
-      `❌ Database error: ${error.message.slice(0, 1500)}`
-    );
+    console.error('AUTO SPAWN ERROR:', error);
+    messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
+    if (spawnMessage) {
+      await query('DELETE FROM active_spawns WHERE message_id = ?', [spawnMessage.id]).catch(() => {});
+      clearExpiry(spawnMessage.id);
+      await spawnMessage.delete().catch(() => {});
+    }
+  } finally {
+    autoSpawnInProgress = false;
   }
-}
-
-if (interaction.commandName === "spawn") {
-  const selectedBall = "Turkey";
-
-  const catchButton = new ButtonBuilder()
-    .setCustomId("catch_ball")
-    .setLabel("Catch")
-    .setStyle(ButtonStyle.Primary);
-
-  const row = new ActionRowBuilder().addComponents(catchButton);
-
-  await interaction.reply({
-    content: "A wild country ball appeared!",
-    files: ["./turkey.png"],
-    components: [row]
-  });
-
-  const spawnMessage = await interaction.fetchReply();
-
-  activeSpawns.set(spawnMessage.id, selectedBall);
-  testSpawns.add(spawnMessage.id);
-}
-
-  if (interaction.isButton() && interaction.customId === "catch_ball") {
-    const ball = activeSpawns.get(interaction.message.id);
-
-if (!ball) {
-  return interaction.reply({
-    content: "This ball was already caught!",
-    ephemeral: true
-  });
-}
-  const modal = new ModalBuilder()
-  .setCustomId(`guess_ball_${interaction.message.id}`)
-    .setTitle("Catch the ball!");
-
-  const guessInput = new TextInputBuilder()
-    .setCustomId("ball_guess")
-    .setLabel("Which ball is this?")
-    .setStyle(TextInputStyle.Short)
-    .setRequired(true);
-
-  const row = new ActionRowBuilder().addComponents(guessInput);
-
-  modal.addComponents(row);
-
-  await interaction.showModal(modal);
-}
-if (interaction.isModalSubmit() && interaction.customId.startsWith("guess_ball_")) {
-  const spawnMessageId = interaction.customId.replace("guess_ball_", "");
-const currentBall = activeSpawns.get(spawnMessageId);
-
-  if (!currentBall) {
-    return interaction.reply({
-      content: `${interaction.user}, this ball was already caught!`
-    });
-  }
-
-  const guess = interaction.fields.getTextInputValue("ball_guess").trim();
-
-  const acceptedAnswers = [
-  currentBall,
-  ...(ballAliases[currentBall] || [])
-];
-
-if (
-  acceptedAnswers.some(
-    answer => guess.toLowerCase() === answer.toLowerCase()
-  )
-) {
-    if (!activeSpawns.has(spawnMessageId)) {
-  return interaction.reply({
-    content: `${interaction.user}, this ball was already caught!`
-  });
-}
-
-activeSpawns.delete(spawnMessageId);
-    const correctMessages = [
-      `${interaction.user} was correct and got **${currentBall}**!`,
-      `${interaction.user} caught **${currentBall}**!`,
-      `${interaction.user} got it! It was **${currentBall}**!`,
-      `${interaction.user} guessed correctly! The ball was **${currentBall}**!`,
-      `${interaction.user} successfully caught **${currentBall}**!`
-    ];
-
-    const randomMessage =
-      correctMessages[Math.floor(Math.random() * correctMessages.length)];
-
-    await interaction.reply({
-  content: randomMessage
 });
 
-const disabledButton = new ButtonBuilder()
-  .setCustomId("catch_ball")
-  .setLabel("Caught!")
-  .setStyle(ButtonStyle.Secondary)
-  .setDisabled(true);
-
-const disabledRow = new ActionRowBuilder().addComponents(disabledButton);
-
-await interaction.message.edit({
-  components: [disabledRow]
+client.on('messageDelete', message => {
+  clearExpiry(message.id);
+  query('DELETE FROM active_spawns WHERE message_id = ?', [message.id])
+    .catch(error => console.error('SPAWN CLEANUP ERROR:', error));
 });
-const isTest = testSpawns.has(spawnMessageId);
 
-if (!isTest) {
-  const userId = interaction.user.id;
+async function sendLongReply(interaction, content) {
+  const chunks = [];
+  let chunk = '';
+  for (const line of content.split('\n')) {
+    if ((chunk + line + '\n').length > 1900) { chunks.push(chunk); chunk = ''; }
+    chunk += line + '\n';
+  }
+  if (chunk) chunks.push(chunk);
+  await interaction.editReply({ content: chunks.shift(), allowedMentions: { parse: [] } });
+  for (const text of chunks) await interaction.followUp({ content: text, allowedMentions: { parse: [] } });
+}
 
-  if (!collections[userId]) {
-    collections[userId] = [];
+async function handleInteraction(interaction) {
+  if (interaction.isAutocomplete()) {
+    const focused = interaction.options.getFocused(true);
+    let names = [];
+    if (interaction.commandName === 'ballgive' && focused.name === 'ball') {
+      const owned = await query('SELECT ball_name FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name', [interaction.user.id]);
+      names = owned.rows.map(row => row[0].value);
+    } else if (interaction.commandName === 'previewball' && focused.name === 'countryball') {
+      names = Object.keys(balls);
+    }
+    return interaction.respond(suggestions(names, focused.value));
   }
 
-  collections[userId].push(currentBall);
-  
-  await tursoQuery(
-  `INSERT INTO collections (user_id, ball_name, quantity)
-   VALUES (?, ?, 1)
-   ON CONFLICT(user_id, ball_name)
-   DO UPDATE SET quantity = quantity + 1`,
-  [userId, currentBall]
-);
-}
-    
-    testSpawns.delete(spawnMessageId);
-  } else {
-    await interaction.reply({
-      content: `${interaction.user} guessed the wrong ball!`
+  if (interaction.isButton() && interaction.customId === 'catch_ball') {
+    // Opening the modal needs no network lookup, so slow database reads cannot time it out.
+    // The saved spawn and answer are checked when the modal is submitted.
+    const input = new TextInputBuilder().setCustomId('ball_guess').setLabel('Which ball is this?')
+      .setStyle(TextInputStyle.Short).setRequired(true);
+    const modal = new ModalBuilder().setCustomId(`guess_ball_${interaction.message.id}`)
+      .setTitle('Catch the ball!').addComponents(new ActionRowBuilder().addComponents(input));
+    return interaction.showModal(modal);
+  }
+
+  if (interaction.isModalSubmit() && interaction.customId.startsWith('guess_ball_')) {
+    await interaction.deferReply();
+    const messageId = interaction.customId.slice('guess_ball_'.length);
+    const spawn = await loadSavedSpawn(messageId);
+    if (!spawn) return interaction.editReply('This spawn has expired or is no longer available. Try the next ball!');
+    const guess = interaction.fields.getTextInputValue('ball_guess');
+    if (!resolveBall(guess, [spawn.ballName])) {
+      return interaction.editReply({ content: `${interaction.user} guessed the wrong ball!`, allowedMentions: { parse: [] } });
+    }
+    const claimed = await claimSavedSpawn(messageId, interaction.user.id, spawn.ballName);
+    if (!claimed) return interaction.editReply('This spawn was caught or expired before your answer could be saved.');
+    clearExpiry(messageId);
+    await interaction.editReply({
+      content: `${interaction.user} caught **${claimed.ballName}**!` +
+        (claimed.isTest ? '\nTest spawn — not added to your collection.' : ''),
+      allowedMentions: { parse: [] }
     });
+    // A Discord message-edit failure must not undo or repeat a successful award.
+    try {
+      const original = interaction.message || await interaction.channel.messages.fetch(messageId);
+      await original.edit({ components: [catchRow(true, 'Caught!')] });
+    } catch (error) { console.error('Could not disable caught button:', error.message); }
+    return;
+  }
+
+  if (!interaction.isChatInputCommand()) return;
+  const command = interaction.commandName;
+  if (command === 'ballgive') {
+    const recipient = interaction.options.getUser('user', true);
+    if (recipient.id === interaction.user.id || recipient.bot) {
+      return interaction.reply({ content: recipient.bot ? "You can't give balls to bots!" : "You can't give a ball to yourself!", ephemeral: true });
+    }
+    await interaction.deferReply({ ephemeral: true });
+    const owned = await query('SELECT ball_name FROM collections WHERE user_id = ? AND quantity > 0', [interaction.user.id]);
+    const ballName = resolveBall(interaction.options.getString('ball', true), owned.rows.map(row => row[0].value));
+    if (!ballName) return interaction.editReply("You don't own that ball. Choose one from the suggestions!");
+    if (!await transferBall(interaction.user.id, recipient.id, ballName)) return interaction.editReply("You don't own that ball anymore!");
+    return interaction.editReply({
+  content: `<@${interaction.user.id}> gave **${ballName}** to <@${recipient.id}>!`,
+  allowedMentions: { parse: [] }
+});
+  }
+
+  if (command === 'compare') {
+    const other = interaction.options.getUser('user', true);
+    if (other.id === interaction.user.id) return interaction.reply({ content: 'Choose someone else to compare with!', ephemeral: true });
+    await interaction.deferReply();
+    const result = await query('SELECT user_id, ball_name, quantity FROM collections WHERE user_id IN (?, ?) AND quantity > 0 ORDER BY ball_name', [interaction.user.id, other.id]);
+    const yours = new Map(), theirs = new Map();
+    for (const row of result.rows) (row[0].value === interaction.user.id ? yours : theirs).set(row[1].value, Number(row[2].value));
+    const shared = [...yours.keys()].filter(name => theirs.has(name));
+    const onlyYours = [...yours.keys()].filter(name => !theirs.has(name));
+    const onlyTheirs = [...theirs.keys()].filter(name => !yours.has(name));
+    const total = map => [...map.values()].reduce((sum, n) => sum + n, 0);
+    const list = names => names.length ? names.map(name => `• ${name}`).join('\n') : 'None yet.';
+    return sendLongReply(interaction, `📚 **MeowlDex Collection Comparison**\n\n` +
+      `<@${interaction.user.id}>: **${yours.size} unique** • **${total(yours)} total balls**\n` +
+      `<@${other.id}>: **${theirs.size} unique** • **${total(theirs)} total balls**\n\n` +
+      `🤝 **Both own (${shared.length})**\n${list(shared)}\n\n` +
+      `📦 **Only you own (${onlyYours.length})**\n${list(onlyYours)}\n\n` +
+      `🔎 **Only they own (${onlyTheirs.length})**\n${list(onlyTheirs)}`);
+  }
+
+  if (command === 'collection') {
+    await interaction.deferReply();
+    const result = await query('SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name', [interaction.user.id]);
+    const list = result.rows.map(row => Number(row[1].value) > 1 ? `${row[0].value} ×${row[1].value}` : row[0].value);
+    return sendLongReply(interaction, `📚 **${interaction.user.username}'s MeowlDex Collection**\n\n` +
+      (list.join('\n') || "You haven't caught any balls yet!"));
+  }
+
+  if (command === 'previewball') {
+    const name = resolveBall(interaction.options.getString('countryball', true));
+    if (!name || !customArt[name]) return interaction.reply("This country ball doesn't have an art yet!");
+    await interaction.deferReply();
+    return interaction.editReply({ content: `This is the present art of ${name}`, files: [customArt[name]] });
+  }
+
+  if (command === 'spawn') {
+    await interaction.deferReply();
+    let message;
+    try {
+      message = await interaction.editReply({ content: 'A wild country ball appeared!', files: [customArt.Turkey], components: [catchRow(true, 'Preparing…')] });
+      await saveSpawn(message, 'Turkey', true);
+      await message.edit({ components: [catchRow()] });
+    } catch (error) {
+      if (message) await query('DELETE FROM active_spawns WHERE message_id = ?', [message.id]).catch(() => {});
+      await interaction.editReply({ content: 'Could not prepare the test spawn. Please try again.', components: [] }).catch(() => {});
+      throw error;
+    }
+    return;
+  }
+
+  if (command === 'craft') {
+    await interaction.deferReply();
+    const recipe = craftRecipes[interaction.options.getString('recipe', true)];
+    if (!recipe) return interaction.editReply('Choose a valid recipe.');
+    if (!await craftBall(interaction.user.id, recipe)) {
+      return interaction.editReply(`🛠️ You need **${recipe.ingredients.join(' + ')}** to craft **${recipe.result}**!`);
+    }
+    return interaction.editReply(`🛠️ **CRAFT SUCCESSFUL!**\n\n${recipe.ingredients.join(' + ')} → **${recipe.result}** ✨`);
+  }
+
+  if (command === 'rarity') {
+    return interaction.reply('🌟 **MeowlDex Rarities** 🌟\n\n' +
+      '⚪ **Common**\n🟢 **Uncommon**\n🔵 **Rare**\n🟣 **Legendary**\n🔴 **Mythic**\n💪 **Superpower**\n🏺 **Ancient**\n\n' +
+      '**Ancient Balls:**\n• Xiongnu\n• Göktürk Khaganate\n• Ancient Egypt\n• Babylon\n• Hittite Empire\n• Assyrian Empire\n• Ancient Greece');
   }
 }
 
-  if (interaction.commandName === "craft") {
-  const userId = interaction.user.id;
-
-  const data = await tursoQuery(
-    `SELECT ball_name, quantity
-     FROM collections
-     WHERE user_id = ?`,
-    [userId]
-  );
-
-  const rows =
-    data.results?.[0]?.response?.result?.rows || [];
-
-  const owned = {};
-
-  for (const row of rows) {
-    owned[row[0].value] = Number(row[1].value);
-  }
-
-  const recipeName = interaction.options.getString("recipe");
-const recipe = craftRecipes[recipeName];
-
-  const hasIngredients = recipe.ingredients.every(
-    ball => (owned[ball] || 0) >= 1
-  );
-
-  if (!hasIngredients) {
-  return interaction.reply(
-    `🛠️ You need **${recipe.ingredients.join(" + ")}** to craft **${recipe.result}**!`
-  );
-}
-
-await tursoTransaction([
-  ...recipe.ingredients.map(ball => ({
-    sql: `UPDATE collections
-SET quantity = quantity - 1
-WHERE user_id = ? AND ball_name = ?`,
-    args: [userId, ball]
-  })),
-
-  {
-    sql: `DELETE FROM collections
-          WHERE user_id = ? AND quantity <= 0`,
-    args: [userId]
-  },
-
-  {
-    sql: `INSERT INTO collections (user_id, ball_name, quantity)
-          VALUES (?, ?, 1)
-          ON CONFLICT(user_id, ball_name)
-          DO UPDATE SET quantity = quantity + 1`,
-    args: [userId, recipe.result]
-  }
-]);
-
-return interaction.reply(
-  `🛠️ **CRAFT SUCCESSFUL!**\n\n` +
-  `${recipe.ingredients.join(" + ")} → **${recipe.result}** ✨`
-);
-}
-  
-if (interaction.commandName === "collection") {
-  const userId = interaction.user.id;
-
-  const data = await tursoQuery(
-    `SELECT ball_name, quantity
-     FROM collections
-     WHERE user_id = ?
-     ORDER BY ball_name`,
-    [userId]
-  );
-
-  const rows =
-    data.results?.[0]?.response?.result?.rows || [];
-
-  if (rows.length === 0) {
-    return interaction.reply(
-      `📚 **${interaction.user.username}'s MeowlDex Collection**\n\n` +
-      `You haven't caught any balls yet!`
-    );
-  }
-
-  const collection = rows.map(row => {
-    const ballName = row[0].value;
-    const quantity = row[1].value;
-
-    return quantity > 1
-      ? `${ballName} ×${quantity}`
-      : ballName;
+client.on('interactionCreate', interaction => {
+  handleInteraction(interaction).catch(async error => {
+    console.error('INTERACTION ERROR:', error);
+    try {
+      if (interaction.isAutocomplete()) {
+        if (!interaction.responded) await interaction.respond([]);
+      } else {
+        const content = 'Something went wrong. If you were catching, giving, or crafting a ball, check your collection before trying again.';
+        if (interaction.deferred) await interaction.editReply({ content });
+        else if (!interaction.replied) await interaction.reply({ content, ephemeral: true });
+      }
+    } catch (replyError) { console.error('Could not send error reply:', replyError.message); }
   });
-
-  return interaction.reply(
-    `📚 **${interaction.user.username}'s MeowlDex Collection**\n\n` +
-    collection.join("\n")
-  );
-}
 });
 
 const commands = [
+  new SlashCommandBuilder()
+    .setName("ballgive")
+    .setDescription("Give a ball from your collection to someone")
+    .addUserOption(option =>
+      option
+        .setName("user")
+        .setDescription("Who receives the ball")
+        .setRequired(true)
+    )
+    .addStringOption(option =>
+      option
+        .setName("ball")
+        .setDescription("The name of the ball to give")
+        .setRequired(true)
+        .setAutocomplete(true)
+    ),
+  
   new SlashCommandBuilder()
     .setName("rarity")
     .setDescription("Shows the MeowlDex rarity tiers"),
@@ -1166,21 +1060,30 @@ const commands = [
       .setName("countryball")
       .setDescription("The countryball you want to preview")
       .setRequired(true)
+      .setAutocomplete(true)
   )
 ].map(command => command.toJSON());
 
-const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
-(async () => {
-  try {
-    await rest.put(
-     Routes.applicationGuildCommands("1546632087430373416", "1527806660129591497"),
-      { body: commands }
-    );
-    console.log("Commands registered successfully!");
-  } catch (error) {
-    console.error("Command registration failed:", error);
+async function start() {
+  for (const key of ['DISCORD_TOKEN', 'TURSO_DATABASE_URL', 'TURSO_AUTH_TOKEN']) {
+    if (!process.env[key]) throw new Error(`Missing environment variable: ${key}`);
   }
-})();
+  await setupTursoDatabase();
+  const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+  await rest.put(Routes.applicationGuildCommands('1546632087430373416', '1527806660129591497'), { body: commands });
+  console.log('Commands registered successfully!');
+  client.once('ready', () => {
+    console.log(`MeowlDex is ready as ${client.user.tag}`);
+    restoreSpawnTimers().catch(error => console.error('SPAWN RESTORE ERROR:', error));
+  });
+  await client.login(process.env.DISCORD_TOKEN);
+}
 
-client.login(process.env.DISCORD_TOKEN);
+if (require.main === module) {
+  start().catch(error => {
+    console.error('STARTUP ERROR:', error);
+    process.exitCode = 1;
+    client.destroy();
+  });
+}
