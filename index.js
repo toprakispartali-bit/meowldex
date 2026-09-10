@@ -798,6 +798,7 @@ client.on('messageCreate', async message => {
     const active = await query('SELECT message_id FROM active_spawns WHERE is_test = 0 AND expires_at > ? LIMIT 1', [Date.now()]);
     if (active.rows.length) return;
     messagesUntilSpawn--;
+    console.log(`[MeowlDex] Messages until spawn: ${messagesUntilSpawn}`);
     if (messagesUntilSpawn > 0) return;
     const ballName = pickWeightedBall();
     const channel = await client.channels.fetch(channelId);
