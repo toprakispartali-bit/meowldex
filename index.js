@@ -1072,7 +1072,20 @@ async function start() {
   }
   await setupTursoDatabase();
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
-  await rest.put(Routes.applicationGuildCommands('1546632087430373416', '1527806660129591497'), { body: commands });
+ const guilds = [
+  '1527806660129591497',
+  '1538863607474028554'
+];
+
+for (const guildId of guilds) {
+  await rest.put(
+    Routes.applicationGuildCommands(
+      '1546632087430373416',
+      guildId
+    ),
+    { body: commands }
+  );
+}
   console.log('Commands registered successfully!');
   client.once('ready', () => {
     console.log(`MeowlDex is ready as ${client.user.tag}`);
