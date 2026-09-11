@@ -936,9 +936,10 @@ async function handleInteraction(interaction) {
   `${interaction.user} successfully caught **${claimed.ballName}**!`,
   `${interaction.user} got it! It was **${claimed.ballName}**!`,
   `${interaction.user} guessed correctly! The ball was **${claimed.ballName}**!`,
-  `${interaction.user} secured **${claimed.ballName}**! 🔥`,
+  `${interaction.user} secured **${claimed.ballName}**!`,
   `Nice one, ${interaction.user}! You caught **${claimed.ballName}**!`,
-  `${interaction.user} knew it was **${claimed.ballName}**!`
+  `${interaction.user} knew the ball, it was **${claimed.ballName}**!`,
+  `${interaction.user} has good ball knowledge, they caught **${claimed.ballName}**!`
 ];
 const randomCorrect =
   correctMessages[Math.floor(Math.random() * correctMessages.length)];
