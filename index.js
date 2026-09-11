@@ -491,7 +491,7 @@ const customArt = {
   "Soviet Union": "./soviet-union.png",
   "Desert Rivals": "./desert-rivals.png",
   "Libya": "./libya.png",
-  "Nazi Germany": "./nazi-germany.png"
+  "Nazi Germany": "./nazi-germany.png",
   "Tajikistan": "./tajikistan.png"
 };
 
