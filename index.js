@@ -492,7 +492,8 @@ const customArt = {
   "Desert Rivals": "./desert-rivals.png",
   "Libya": "./libya.png",
   "Nazi Germany": "./nazi-germany.png",
-  "Tajikistan": "./tajikistan.png"
+  "Tajikistan": "./tajikistan.png",
+  "Djibouti": "./djibouti.png"
 };
 
 const ballAliases = {
