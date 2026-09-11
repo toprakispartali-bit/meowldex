@@ -922,9 +922,9 @@ async function handleInteraction(interaction) {
     `Nope, ${interaction.user}!`,
     `${interaction.user} missed it!`,
     `Wrong answer from ${interaction.user}`,
-    `Wrong ball, ${interaction.user}!`
-    `Skill issue, ${interaction.user}`
-    `Incorrect guess, ${interaction.user}!`
+    `Wrong ball, ${interaction.user}!`,
+    `Skill issue, ${interaction.user}`,
+    `Incorrect guess, ${interaction.user}`
   ];
 
   const randomWrong =
