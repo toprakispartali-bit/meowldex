@@ -551,7 +551,8 @@ const spawnMultipliers = {
 
 const spawnChannelByGuild = {
   "1538863607474028554": "1546803046053576704",
-  "1527806660129591497": "1527808233366880277"
+  "1527806660129591497": "1527808233366880277",
+  "1542507974801621012": "1548091622548570264"
 };
 
 const craftRecipes = {
@@ -1100,21 +1101,34 @@ async function start() {
     if (!process.env[key]) throw new Error(`Missing environment variable: ${key}`);
   }
   await setupTursoDatabase();
-  const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
- const guilds = [
-  '1527806660129591497',
-  '1538863607474028554'
-];
+  const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
-for (const guildId of guilds) {
-  await rest.put(
-    Routes.applicationGuildCommands(
-      '1546632087430373416',
-      guildId
-    ),
-    { body: commands }
-  );
-}
+(async () => {
+  try {
+    console.log("Registering slash commands...");
+
+    const guilds = [
+      "1527806660129591497",
+      "1538863607474028554",
+      "1542507974801621012"
+    ];
+
+    for (const guildId of guilds) {
+      await rest.put(
+        Routes.applicationGuildCommands(
+          "1546632087430373416",
+          guildId
+        ),
+        { body: commands }
+      );
+    }
+
+    console.log("Slash commands registered!");
+  } catch (error) {
+    console.error(error);
+  }
+})();
+  
   console.log('Commands registered successfully!');
   client.once('ready', () => {
     console.log(`MeowlDex is ready as ${client.user.tag}`);
