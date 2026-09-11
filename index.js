@@ -494,7 +494,8 @@ const customArt = {
   "Nazi Germany": "./nazi-germany.png",
   "Tajikistan": "./tajikistan.png",
   "Djibouti": "./djibouti.png",
-  "England": "./england.png"
+  "England": "./england.png",
+  "Georgia": "./georgia.png"
 };
 
 const ballAliases = {
