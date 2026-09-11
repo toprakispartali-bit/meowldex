@@ -506,18 +506,31 @@ const ballAliases = {
   ],
 
   "United States of America": [
-    "United States"
+    "USA",
+    "US",
+    "United States",
+    "America"
   ],
 
   "United Kingdom": [
+    "UK",
     "Britain",
     "Great Britain"
   ],
-  
+
   "Turkey": [
-    "Turkiye"
+    "Turkiye",
+    "Türkiye"
   ],
-  
+
+  "United Arab Emirates": [
+    "UAE"
+  ],
+
+  "Central African Republic": [
+    "CAR"
+  ],
+
   "Nauru": [
     "Naoero"
   ],
@@ -529,8 +542,10 @@ const ballAliases = {
   "Myanmar": [
     "Burma"
   ],
+
   "Timor-Leste": [
-    "East Timor"
+    "East Timor",
+    "Timor Leste"
   ]
 };
 
@@ -900,17 +915,48 @@ async function handleInteraction(interaction) {
     const spawn = await loadSavedSpawn(messageId);
     if (!spawn) return interaction.editReply('This spawn has expired or is no longer available. Try the next ball!');
     const guess = interaction.fields.getTextInputValue('ball_guess');
-    if (!resolveBall(guess, [spawn.ballName])) {
-      return interaction.editReply({ content: `${interaction.user} guessed the wrong ball!`, allowedMentions: { parse: [] } });
-    }
+   if (!resolveBall(guess, [spawn.ballName])) {
+  const wrongMessages = [
+    `${interaction.user} guessed the wrong ball!`,
+    `${interaction.user} got it wrong! Try again next time.`,
+    `Nope, ${interaction.user}!`,
+    `${interaction.user} missed it!`,
+    `Wrong answer from ${interaction.user}`,
+    `Wrong ball, ${interaction.user}!`
+    `Skill issue, ${interaction.user}`
+    `Incorrect guess, ${interaction.user}!`
+  ];
+
+  const randomWrong =
+    wrongMessages[Math.floor(Math.random() * wrongMessages.length)];
+
+  return interaction.editReply({
+    content: randomWrong,
+    allowedMentions: { parse: [] }
+  });
+}
     const claimed = await claimSavedSpawn(messageId, interaction.user.id, spawn.ballName);
     if (!claimed) return interaction.editReply('This spawn was caught or expired before your answer could be saved.');
     clearExpiry(messageId);
-    await interaction.editReply({
-      content: `${interaction.user} caught **${claimed.ballName}**!` +
-        (claimed.isTest ? '\nTest spawn — not added to your collection.' : ''),
-      allowedMentions: { parse: [] }
-    });
+    const correctMessages = [
+  `${interaction.user} caught **${claimed.ballName}**!`,
+  `${interaction.user} successfully caught **${claimed.ballName}**!`,
+  `${interaction.user} got it! It was **${claimed.ballName}**!`,
+  `${interaction.user} guessed correctly! The ball was **${claimed.ballName}**!`,
+  `${interaction.user} secured **${claimed.ballName}**!`,
+  `${interaction.user} was fast enough to catch **${claimed.ballName}**!`,
+  `${interaction.user} has good countryball knowledge, they caught **${claimed.ballName}**!`
+  `${interaction.user} just got **${claimed.ballName}**!`
+];
+
+const randomCorrect =
+  correctMessages[Math.floor(Math.random() * correctMessages.length)];
+
+await interaction.editReply({
+  content: randomCorrect +
+    (claimed.isTest ? '\nTest spawn — not added to your collection.' : ''),
+  allowedMentions: { parse: [] }
+});
     // A Discord message-edit failure must not undo or repeat a successful award.
     try {
       const original = interaction.message || await interaction.channel.messages.fetch(messageId);
@@ -926,7 +972,7 @@ async function handleInteraction(interaction) {
     if (recipient.id === interaction.user.id || recipient.bot) {
       return interaction.reply({ content: recipient.bot ? "You can't give balls to bots!" : "You can't give a ball to yourself!", ephemeral: true });
     }
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply();
     const owned = await query('SELECT ball_name FROM collections WHERE user_id = ? AND quantity > 0', [interaction.user.id]);
     const ballName = resolveBall(interaction.options.getString('ball', true), owned.rows.map(row => row[0].value));
     if (!ballName) return interaction.editReply("You don't own that ball. Choose one from the suggestions!");
