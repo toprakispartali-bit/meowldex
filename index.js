@@ -501,13 +501,10 @@ const customArt = {
 const ballAliases = {
   "Democratic Republic of the Congo": [
     "DR Congo",
-    "DRC",
     "Democratic Republic of Congo"
   ],
 
   "United States of America": [
-    "USA",
-    "US",
     "United States",
     "America"
   ],
@@ -521,14 +518,6 @@ const ballAliases = {
   "Turkey": [
     "Turkiye",
     "Türkiye"
-  ],
-
-  "United Arab Emirates": [
-    "UAE"
-  ],
-
-  "Central African Republic": [
-    "CAR"
   ],
 
   "Nauru": [
@@ -546,6 +535,10 @@ const ballAliases = {
   "Timor-Leste": [
     "East Timor",
     "Timor Leste"
+  ],
+
+   "Republic of the Congo": [
+    "Congo"
   ]
 };
 
@@ -943,12 +936,10 @@ async function handleInteraction(interaction) {
   `${interaction.user} successfully caught **${claimed.ballName}**!`,
   `${interaction.user} got it! It was **${claimed.ballName}**!`,
   `${interaction.user} guessed correctly! The ball was **${claimed.ballName}**!`,
-  `${interaction.user} secured **${claimed.ballName}**!`,
-  `${interaction.user} was fast enough to catch **${claimed.ballName}**!`,
-  `${interaction.user} has good countryball knowledge, they caught **${claimed.ballName}**!`
-  `${interaction.user} just got **${claimed.ballName}**!`
+  `${interaction.user} secured **${claimed.ballName}**! 🔥`,
+  `Nice one, ${interaction.user}! You caught **${claimed.ballName}**!`,
+  `${interaction.user} knew it was **${claimed.ballName}**!`
 ];
-
 const randomCorrect =
   correctMessages[Math.floor(Math.random() * correctMessages.length)];
 
