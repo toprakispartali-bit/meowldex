@@ -539,6 +539,10 @@ const ballAliases = {
 
    "Republic of the Congo": [
     "Congo"
+  ],
+
+  "Bosnia and Herzegovina": [
+    "Bosnia"
   ]
 };
 
