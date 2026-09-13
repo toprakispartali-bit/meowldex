@@ -495,7 +495,8 @@ const customArt = {
   "Tajikistan": "./tajikistan.png",
   "Djibouti": "./djibouti.png",
   "England": "./england.png",
-  "Georgia": "./georgia.png"
+  "Georgia": "./georgia.png",
+  "France": "./france.png"
 };
 
 const ballAliases = {
