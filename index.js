@@ -131,7 +131,7 @@ const balls = {
 "Indonesia": "Legendary",
 "Vietnam": "Legendary",
 "Singapore": "Mythic",
-"North Korea": "Rare",
+"North Korea": "Legendary",
 "Turkmenistan": "Rare",
 "Uzbekistan": "Rare",
 "Thailand": "Rare",
@@ -496,7 +496,8 @@ const customArt = {
   "Djibouti": "./djibouti.png",
   "England": "./england.png",
   "Georgia": "./georgia.png",
-  "France": "./france.png"
+  "France": "./france.png",
+  "North Korea": "./north-korea.png"
 };
 
 const ballAliases = {
