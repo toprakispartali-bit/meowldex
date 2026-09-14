@@ -484,7 +484,7 @@ const flagCodes = {
 };
 
 const customArt = {
-  "Turkiye": "./turkey.png",
+  "Turkiye": "./turkiye.png",
   "Saudi Arabia": "./saudi-arabia.png",
   "Algeria": "./algeria.png",
   "Morocco": "./morocco.png",
@@ -1020,7 +1020,7 @@ await interaction.editReply({
     await interaction.deferReply();
     let message;
     try {
-      message = await interaction.editReply({ content: 'A wild country ball appeared!', files: [customArt.Turkey], components: [catchRow(true, 'Preparing…')] });
+      message = await interaction.editReply({ content: 'A wild country ball appeared!', files: [customArt.Turkiye], components: [catchRow(true, 'Preparing…')] });
       await saveSpawn(message, 'Turkey', true);
       await message.edit({ components: [catchRow()] });
     } catch (error) {
