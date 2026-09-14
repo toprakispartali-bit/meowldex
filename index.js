@@ -14,7 +14,7 @@ const {
 
 
 const balls = {
-  "Turkey": "Legendary",
+  "Turkiye": "Legendary",
   "Morocco": "Legendary",
   "Egypt": "Legendary",
   "Nigeria": "Legendary",
@@ -286,7 +286,7 @@ const balls = {
 };
 
 const flagCodes = {
-  "Turkey": "tr",
+  "Turkiye": "tr",
   "France": "fr",
   "United Kingdom": "gb",
   "Poland": "pl",
@@ -484,7 +484,7 @@ const flagCodes = {
 };
 
 const customArt = {
-  "Turkey": "./turkey.png",
+  "Turkiye": "./turkey.png",
   "Saudi Arabia": "./saudi-arabia.png",
   "Algeria": "./algeria.png",
   "Morocco": "./morocco.png",
@@ -517,8 +517,8 @@ const ballAliases = {
     "Great Britain"
   ],
 
-  "Turkey": [
-    "Turkiye",
+  "Turkiye": [
+    "Turkey",
     "Türkiye"
   ],
 
