@@ -894,7 +894,9 @@ async function sendLongReply(interaction, content) {
 
 const ballEmojis = {
   "Turkiye": "<:turkiye:1549137258320363601>",
-  "Jamaica": "<:jamaica:1549456606293655696>"
+  "Jamaica": "<:jamaica:1549456606293655696>",
+  "Tunisia": "<:tunisia:1549460632666116151>",
+  "Botswana": "<:botswana:1549461802121953290>"
 };
 
 async function handleInteraction(interaction) {
