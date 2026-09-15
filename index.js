@@ -1160,16 +1160,15 @@ async function start() {
   await setupTursoDatabase();
   const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
-(async () => {
-  try {
-    console.log("Registering slash commands...");
+try {
+  console.log("Registering slash commands...");
 
-    const guilds = [
-      "1527806660129591497",
-      "1538863607474028554",
-      "1542507974801621012",
-      "1549135179245686854"
-    ];
+   const guilds = [
+  "1527806660129591497",
+  "1538863607474028554",
+  "1542507974801621012",
+  "1549135179245686854"
+];
 
     for (const guildId of guilds) {
       await rest.put(
@@ -1185,7 +1184,6 @@ async function start() {
   } catch (error) {
     console.error(error);
   }
-})();
   
   console.log('Commands registered successfully!');
   client.once('ready', () => {
