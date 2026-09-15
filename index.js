@@ -1171,14 +1171,21 @@ try {
 ];
 
     for (const guildId of guilds) {
-      await rest.put(
-        Routes.applicationGuildCommands(
-          "1546632087430373416",
-          guildId
-        ),
-        { body: commands }
-      );
-    }
+  try {
+    await rest.put(
+      Routes.applicationGuildCommands(
+        "1546632087430373416",
+        guildId
+      ),
+      { body: commands }
+    );
+
+    console.log(`Commands registered: ${guildId}`);
+  } catch (error) {
+    console.error(`FAILED guild: ${guildId}`, error);
+    throw error;
+  }
+}
 
     console.log("Slash commands registered!");
   } catch (error) {
