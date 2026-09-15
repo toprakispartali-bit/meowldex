@@ -658,7 +658,7 @@ async function transaction(statements) {
 }
 
 async function setupTursoDatabase() {
-  await query(`CREATE TABLE IF NOT EXISTS s (
+  await query(`CREATE TABLE IF NOT EXISTS collections (
     user_id TEXT NOT NULL, ball_name TEXT NOT NULL,
     quantity INTEGER NOT NULL DEFAULT 1, PRIMARY KEY (user_id, ball_name)
   )`);
