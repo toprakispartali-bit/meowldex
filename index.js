@@ -1098,22 +1098,15 @@ client.on('interactionCreate', interaction => {
 });
 
 const commands = [
-  new SlashCommandBuilder()
-    .setName("ballgive")
-    .setDescription("Give a ball from your collection to someone")
-    .addUserOption(option =>
-      option
-        .setName("user")
-        .setDescription("Who receives the ball")
-        .setRequired(true)
-    )
-    .addStringOption(option =>
-      option
-        .setName("ball")
-        .setDescription("The name of the ball to give")
-        .setRequired(true)
-        .setAutocomplete(true)
-    ),
+ new SlashCommandBuilder()
+.setName("ballgive")
+.setDescription("Give balls from your collection to someone")
+.addUserOption(option =>
+  option
+    .setName("user")
+    .setDescription("Who receives the balls")
+    .setRequired(true)
+),
   
   new SlashCommandBuilder()
     .setName("rarity")
