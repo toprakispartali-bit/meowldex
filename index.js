@@ -1016,17 +1016,20 @@ await interaction.editReply({
   if (command === 'collection') {
     await interaction.deferReply();
     const result = await query('SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name', [interaction.user.id]);
-    const list = result.rows.map(row => {
-    const name = row[0].value;
-    const quantity = Number(row[1].value);
-    const emoji = ballEmojis[name] || "⚪";
+   const emojis = result.rows
+  .map(row => ballEmojis[row[0].value])
+  .filter(Boolean);
 
-  return quantity > 1
-    ? `${emoji} ${name} ×${quantity}`
-    : `${emoji} ${name}`;
-});
+const lines = [];
+
+for (let i = 0; i < emojis.length; i += 20) {
+  lines.push(emojis.slice(i, i + 20).join(' '));
+}
+
+const list = lines.join('\n');
+    
     return sendLongReply(interaction, `📚 **${interaction.user.username}'s MeowlDex Collection**\n\n` +
-      (list.join('\n') || "You haven't caught any balls yet!"));
+      (list || "You haven't caught any balls yet!"));
   }
 
   if (command === 'previewball') {
