@@ -7,6 +7,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
   ActionRowBuilder,
+  StringSelectMenuBuilder,
   ModalBuilder,
   TextInputBuilder,
   TextInputStyle
@@ -904,23 +905,20 @@ const ballEmojis = {
 
 async function handleInteraction(interaction) {
   if (interaction.isAutocomplete()) {
-    const focused = interaction.options.getFocused(true);
-    let names = [];
-    if (interaction.commandName === 'ballgive' && focused.name === 'ball') {
-      const owned = await query(
-  'SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name',
-  [interaction.user.id]
-);
-
-names = owned.rows.flatMap(row =>
-  Array(Number(row[1].value)).fill(row[0].value)
-);
-    } else if (interaction.commandName === 'previewball' && focused.name === 'countryball') {
-      names = Object.keys(balls);
-    }
+    // your autocomplete stuff...
     return interaction.respond(suggestions(names, focused.value));
   }
 
+  // PASTE THE NEW BALLGIVE SELECT-MENU BLOCK HERE
+
+  if (
+    interaction.isStringSelectMenu() &&
+    interaction.customId.startsWith('ballgive_select_')
+  ) {
+    // the code I sent you
+  }
+
+  // THEN your old code continues normally
   if (interaction.isButton() && interaction.customId === 'catch_ball') {
     // Opening the modal needs no network lookup, so slow database reads cannot time it out.
     // The saved spawn and answer are checked when the modal is submitted.
@@ -988,21 +986,59 @@ await interaction.editReply({
 
   if (!interaction.isChatInputCommand()) return;
   const command = interaction.commandName;
-  if (command === 'ballgive') {
-    const recipient = interaction.options.getUser('user', true);
-    if (recipient.id === interaction.user.id || recipient.bot) {
-      return interaction.reply({ content: recipient.bot ? "You can't give balls to bots!" : "You can't give a ball to yourself!", ephemeral: true });
-    }
-    await interaction.deferReply();
-    const owned = await query('SELECT ball_name FROM collections WHERE user_id = ? AND quantity > 0', [interaction.user.id]);
-    const ballName = resolveBall(interaction.options.getString('ball', true), owned.rows.map(row => row[0].value));
-    if (!ballName) return interaction.editReply("You don't own that ball. Choose one from the suggestions!");
-    if (!await transferBall(interaction.user.id, recipient.id, ballName)) return interaction.editReply("You don't own that ball anymore!");
-    return interaction.editReply({
-  content: `<@${interaction.user.id}> gave **${ballName}** to <@${recipient.id}>!`,
-  allowedMentions: { parse: [] }
-});
+ if (command === 'ballgive') {
+  const recipient = interaction.options.getUser('user', true);
+
+  if (recipient.id === interaction.user.id || recipient.bot) {
+    return interaction.reply({
+      content: recipient.bot
+        ? "You can't give balls to bots!"
+        : "You can't give balls to yourself!",
+      ephemeral: true
+    });
   }
+
+  const owned = await query(
+    'SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name',
+    [interaction.user.id]
+  );
+
+  const options = [];
+
+  for (const row of owned.rows) {
+    const name = row[0].value;
+    const quantity = Number(row[1].value);
+
+    for (let i = 1; i <= quantity; i++) {
+      options.push({
+        label: quantity > 1 ? `${name} #${i}` : name,
+        value: `${name}|||${i}`
+      });
+    }
+  }
+
+  if (!options.length) {
+    return interaction.reply({
+      content: "You don't own any balls!",
+      ephemeral: true
+    });
+  }
+
+  const menu = new StringSelectMenuBuilder()
+    .setCustomId(`ballgive_select_${recipient.id}`)
+    .setPlaceholder('Choose balls to give')
+    .setMinValues(1)
+    .setMaxValues(Math.min(options.length, 25))
+    .addOptions(options.slice(0, 25));
+
+  const row = new ActionRowBuilder().addComponents(menu);
+
+  return interaction.reply({
+    content: `🎁 Choose which balls you want to give to <@${recipient.id}>:`,
+    components: [row],
+    allowedMentions: { parse: [] }
+  });
+}
 
   if (command === 'compare') {
     const other = interaction.options.getUser('user', true);
@@ -1096,6 +1132,8 @@ client.on('interactionCreate', interaction => {
     } catch (replyError) { console.error('Could not send error reply:', replyError.message); }
   });
 });
+
+
 
 const commands = [
  new SlashCommandBuilder()
