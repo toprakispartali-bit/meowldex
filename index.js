@@ -662,8 +662,6 @@ async function setupTursoDatabase() {
     user_id TEXT NOT NULL, ball_name TEXT NOT NULL,
     quantity INTEGER NOT NULL DEFAULT 1, PRIMARY KEY (user_id, ball_name)
   )`);
-
-  await query(`DELETE FROM collections`);
   
   await query(`CREATE TABLE IF NOT EXISTS active_spawns (
     message_id TEXT PRIMARY KEY, ball_name TEXT NOT NULL,
@@ -1036,7 +1034,7 @@ await interaction.editReply({
     let message;
     try {
       message = await interaction.editReply({ content: 'A wild country ball appeared!', files: [customArt.Turkiye], components: [catchRow(true, 'Preparing…')] });
-      await saveSpawn(message, 'Turkey', true);
+      await saveSpawn(message, 'Turkiye', true);
       await message.edit({ components: [catchRow()] });
     } catch (error) {
       if (message) await query('DELETE FROM active_spawns WHERE message_id = ?', [message.id]).catch(() => {});
