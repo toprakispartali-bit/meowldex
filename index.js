@@ -1170,27 +1170,17 @@ try {
   "1549135179245686854"
 ];
 
-    for (const guildId of guilds) {
-  try {
-    await rest.put(
-      Routes.applicationGuildCommands(
-        "1546632087430373416",
-        guildId
-      ),
-      { body: commands }
-    );
+  for (const guildId of guilds) {
+  const result = await rest.put(
+    Routes.applicationGuildCommands(
+      "1546632087430373416",
+      guildId
+    ),
+    { body: commands }
+  );
 
-    console.log(`Commands registered: ${guildId}`);
-  } catch (error) {
-    console.error(`FAILED guild: ${guildId}`, error);
-    throw error;
-  }
+  console.log(`Registered ${result.length} commands in ${guildId}`);
 }
-
-    console.log("Slash commands registered!");
-  } catch (error) {
-    console.error(error);
-  }
   
   console.log('Commands registered successfully!');
   client.once('ready', () => {
