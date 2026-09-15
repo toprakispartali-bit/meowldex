@@ -658,7 +658,7 @@ async function transaction(statements) {
 }
 
 async function setupTursoDatabase() {
-  await query(`CREATE TABLE IF NOT EXISTS collections (
+  await query(`CREATE TABLE IF NOT EXISTS s (
     user_id TEXT NOT NULL, ball_name TEXT NOT NULL,
     quantity INTEGER NOT NULL DEFAULT 1, PRIMARY KEY (user_id, ball_name)
   )`);
@@ -885,6 +885,10 @@ async function sendLongReply(interaction, content) {
   for (const text of chunks) await interaction.followUp({ content: text, allowedMentions: { parse: [] } });
 }
 
+const ballEmojis = {
+  "Turkiye": "<:turkiye:1549137258320363601>"
+};
+
 async function handleInteraction(interaction) {
   if (interaction.isAutocomplete()) {
     const focused = interaction.options.getFocused(true);
@@ -1004,7 +1008,15 @@ await interaction.editReply({
   if (command === 'collection') {
     await interaction.deferReply();
     const result = await query('SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name', [interaction.user.id]);
-    const list = result.rows.map(row => Number(row[1].value) > 1 ? `${row[0].value} ×${row[1].value}` : row[0].value);
+    const list = result.rows.map(row => {
+    const name = row[0].value;
+    const quantity = Number(row[1].value);
+    const emoji = ballEmojis[name] || "⚪";
+
+  return quantity > 1
+    ? `${emoji} ${name} ×${quantity}`
+    : `${emoji} ${name}`;
+});
     return sendLongReply(interaction, `📚 **${interaction.user.username}'s MeowlDex Collection**\n\n` +
       (list.join('\n') || "You haven't caught any balls yet!"));
   }
