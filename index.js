@@ -835,8 +835,14 @@ async function saveSpawn(message, ballName, isTest) {
 
 client.on('messageCreate', async message => {
   if (message.author.bot || !message.guild) return;
-  const channelId = spawnChannelByGuild[message.guild.id];
-  if (!channelId || autoSpawnInProgress) return;
+  const configuredChannelId = spawnChannelByGuild[message.guild.id];
+
+const channelId =
+  message.guild.id === "1549135179245686854"
+    ? message.channel.id
+    : configuredChannelId;
+
+if (!channelId || autoSpawnInProgress) return;
   autoSpawnInProgress = true;
   let spawnMessage;
   try {
