@@ -662,6 +662,9 @@ async function setupTursoDatabase() {
     user_id TEXT NOT NULL, ball_name TEXT NOT NULL,
     quantity INTEGER NOT NULL DEFAULT 1, PRIMARY KEY (user_id, ball_name)
   )`);
+
+  await query(`DELETE FROM collections`);
+  
   await query(`CREATE TABLE IF NOT EXISTS active_spawns (
     message_id TEXT PRIMARY KEY, ball_name TEXT NOT NULL,
     is_test INTEGER NOT NULL DEFAULT 0, expires_at INTEGER NOT NULL,
