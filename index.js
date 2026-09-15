@@ -905,8 +905,14 @@ async function handleInteraction(interaction) {
     const focused = interaction.options.getFocused(true);
     let names = [];
     if (interaction.commandName === 'ballgive' && focused.name === 'ball') {
-      const owned = await query('SELECT ball_name FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name', [interaction.user.id]);
-      names = owned.rows.map(row => row[0].value);
+      const owned = await query(
+  'SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name',
+  [interaction.user.id]
+);
+
+names = owned.rows.flatMap(row =>
+  Array(Number(row[1].value)).fill(row[0].value)
+);
     } else if (interaction.commandName === 'previewball' && focused.name === 'countryball') {
       names = Object.keys(balls);
     }
