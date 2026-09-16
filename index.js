@@ -1064,48 +1064,6 @@ if (command === 'ballgive') {
   });
 }
 
-  const owned = await query(
-    'SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name',
-    [interaction.user.id]
-  );
-
-  const options = [];
-
-  for (const row of owned.rows) {
-    const name = row[0].value;
-    const quantity = Number(row[1].value);
-
-    for (let i = 1; i <= quantity; i++) {
-      options.push({
-        label: quantity > 1 ? `${name} #${i}` : name,
-        value: `${name}|||${i}`
-      });
-    }
-  }
-
-  if (!options.length) {
-    return interaction.reply({
-      content: "You don't own any balls!",
-      ephemeral: true
-    });
-  }
-
-  const menu = new StringSelectMenuBuilder()
-    .setCustomId(`ballgive_select_${recipient.id}`)
-    .setPlaceholder('Choose balls to give')
-    .setMinValues(1)
-    .setMaxValues(Math.min(options.length, 25))
-    .addOptions(options.slice(0, 25));
-
-  const row = new ActionRowBuilder().addComponents(menu);
-
-  return interaction.reply({
-    content: `🎁 Choose which balls you want to give to <@${recipient.id}>:`,
-    components: [row],
-    allowedMentions: { parse: [] }
-  });
-}
-
   if (command === 'compare') {
     const other = interaction.options.getUser('user', true);
     if (other.id === interaction.user.id) return interaction.reply({ content: 'Choose someone else to compare with!', ephemeral: true });
