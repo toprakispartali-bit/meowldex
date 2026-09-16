@@ -1123,8 +1123,28 @@ if (command === 'ballgive') {
     const onlyYours = [...yours.keys()].filter(name => !theirs.has(name));
     const onlyTheirs = [...theirs.keys()].filter(name => !yours.has(name));
     const total = map => [...map.values()].reduce((sum, n) => sum + n, 0);
-    const list = names => names.length ? names.map(name => `• ${name}`).join('\n') : 'None yet.';
-    return sendLongReply(interaction, `📚 **MeowlDex Collection Comparison**\n\n` +
+    const list = names => {
+  if (!names.length) return 'None yet.';
+
+  const emojis = names
+    .map(name => ballEmojis[name])
+    .filter(Boolean);
+
+  const lines = [];
+
+  for (let i = 0; i < emojis.length; i += 10) {
+    lines.push(emojis.slice(i, i + 10).join(' '));
+  }
+
+  return lines.join('\n') || 'None yet.';
+};
+    return sendLongReply(
+  interaction,
+  `📚 **MeowlDex Collection Comparison**\n\n` +
+  `🤝 **Both own:**\n${list(shared)}\n\n` +
+  `📦 **Only <@${interaction.user.id}> has:**\n${list(onlyYours)}\n\n` +
+  `📦 **Only <@${other.id}> has:**\n${list(onlyTheirs)}`
+);
       `<@${interaction.user.id}>: **${yours.size} unique** • **${total(yours)} total balls**\n` +
       `<@${other.id}>: **${theirs.size} unique** • **${total(theirs)} total balls**\n\n` +
       `🤝 **Both own (${shared.length})**\n${list(shared)}\n\n` +
