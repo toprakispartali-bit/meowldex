@@ -1145,24 +1145,34 @@ if (command === 'ballgive') {
   ` **Only <@${interaction.user.id}> has:**\n${list(onlyYours)}\n\n` +
   ` **Only <@${other.id}> has:**\n${list(onlyTheirs)}`
 );
-  if (command === 'collection') {
-    await interaction.deferReply();
-    const result = await query('SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name', [interaction.user.id]);
-   const emojis = result.rows
-  .map(row => ballEmojis[row[0].value])
-  .filter(Boolean);
-
-const lines = [];
-
-for (let i = 0; i < emojis.length; i += 20) {
-  lines.push(emojis.slice(i, i + 20).join(' '));
-}
-
-const list = lines.join('\n');
-    
-    return sendLongReply(interaction, `📚 **${interaction.user.username}'s MeowlDex Collection**\n\n` +
-      (list || "You haven't caught any balls yet!"));
   }
+
+if (command === 'collection') {
+  await interaction.deferReply();
+
+  const result = await query(
+    'SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name',
+    [interaction.user.id]
+  );
+
+  const emojis = result.rows
+    .map(row => ballEmojis[row[0].value])
+    .filter(Boolean);
+
+  const lines = [];
+
+  for (let i = 0; i < emojis.length; i += 10) {
+    lines.push(emojis.slice(i, i + 10).join(' '));
+  }
+
+  const list = lines.join('\n');
+
+  return sendLongReply(
+    interaction,
+    `📚 **${interaction.user.username}'s MeowlDex Collection**\n\n` +
+    (list || "You haven't caught any balls yet!")
+  );
+}
 
   if (command === 'previewball') {
     const name = resolveBall(interaction.options.getString('countryball', true));
