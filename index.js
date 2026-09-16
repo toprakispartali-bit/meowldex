@@ -1161,8 +1161,8 @@ if (command === 'collection') {
 
   const lines = [];
 
-  for (let i = 0; i < emojis.length; i += 10) {
-    lines.push(emojis.slice(i, i + 10).join(' '));
+  for (let i = 0; i < emojis.length; i += 20) {
+    lines.push(emojis.slice(i, i + 20).join(' '));
   }
 
   const list = lines.join('\n');
