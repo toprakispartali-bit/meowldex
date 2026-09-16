@@ -1140,18 +1140,11 @@ if (command === 'ballgive') {
 };
     return sendLongReply(
   interaction,
-  `📚 **MeowlDex Collection Comparison**\n\n` +
-  `🤝 **Both own:**\n${list(shared)}\n\n` +
-  `📦 **Only <@${interaction.user.id}> has:**\n${list(onlyYours)}\n\n` +
-  `📦 **Only <@${other.id}> has:**\n${list(onlyTheirs)}`
+  `**MeowlDex Collection Comparison**\n\n` +
+  `**Both own:**\n${list(shared)}\n\n` +
+  ` **Only <@${interaction.user.id}> has:**\n${list(onlyYours)}\n\n` +
+  ` **Only <@${other.id}> has:**\n${list(onlyTheirs)}`
 );
-      `<@${interaction.user.id}>: **${yours.size} unique** • **${total(yours)} total balls**\n` +
-      `<@${other.id}>: **${theirs.size} unique** • **${total(theirs)} total balls**\n\n` +
-      `🤝 **Both own (${shared.length})**\n${list(shared)}\n\n` +
-      `📦 **Only you own (${onlyYours.length})**\n${list(onlyYours)}\n\n` +
-      `🔎 **Only they own (${onlyTheirs.length})**\n${list(onlyTheirs)}`);
-  }
-
   if (command === 'collection') {
     await interaction.deferReply();
     const result = await query('SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name', [interaction.user.id]);
