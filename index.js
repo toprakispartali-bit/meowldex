@@ -911,13 +911,6 @@ async function handleInteraction(interaction) {
 
   // PASTE THE NEW BALLGIVE SELECT-MENU BLOCK HERE
 
-  if (
-    interaction.isStringSelectMenu() &&
-    interaction.customId.startsWith('ballgive_select_')
-  ) {
-    // the code I sent you
-  }
-
   // THEN your old code continues normally
   if (interaction.isButton() && interaction.customId === 'catch_ball') {
     // Opening the modal needs no network lookup, so slow database reads cannot time it out.
@@ -986,7 +979,7 @@ await interaction.editReply({
 
   if (!interaction.isChatInputCommand()) return;
   const command = interaction.commandName;
- if (command === 'ballgive') {
+if (command === 'ballgive') {
   const recipient = interaction.options.getUser('user', true);
 
   if (recipient.id === interaction.user.id || recipient.bot) {
@@ -997,6 +990,79 @@ await interaction.editReply({
       ephemeral: true
     });
   }
+
+  await interaction.deferReply();
+
+  const input = interaction.options.getString('balls', true);
+
+  const requested = input
+    .split(',')
+    .map(name => name.trim())
+    .filter(Boolean);
+
+  if (!requested.length) {
+    return interaction.editReply("Enter at least one ball!");
+  }
+
+  const owned = await query(
+    'SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0',
+    [interaction.user.id]
+  );
+
+  const ownedMap = new Map(
+    owned.rows.map(row => [
+      row[0].value,
+      Number(row[1].value)
+    ])
+  );
+
+  const resolved = [];
+
+  for (const typedName of requested) {
+    const ballName = resolveBall(typedName, [...ownedMap.keys()]);
+
+    if (!ballName) {
+      return interaction.editReply(
+        `You don't own **${typedName}**! Nothing was given.`
+      );
+    }
+
+    resolved.push(ballName);
+  }
+
+  const needed = new Map();
+
+  for (const ballName of resolved) {
+    needed.set(ballName, (needed.get(ballName) || 0) + 1);
+  }
+
+  for (const [ballName, amount] of needed) {
+    if ((ownedMap.get(ballName) || 0) < amount) {
+      return interaction.editReply(
+        `You don't have ${amount} copies of **${ballName}**! Nothing was given.`
+      );
+    }
+  }
+
+  for (const ballName of resolved) {
+    await transferBall(
+      interaction.user.id,
+      recipient.id,
+      ballName
+    );
+  }
+
+  const summary = [...needed.entries()]
+    .map(([name, amount]) =>
+      amount > 1 ? `**${name} ×${amount}**` : `**${name}**`
+    )
+    .join(', ');
+
+  return interaction.editReply({
+    content: `<@${interaction.user.id}> gave ${summary} to <@${recipient.id}>!`,
+    allowedMentions: { parse: [] }
+  });
+}
 
   const owned = await query(
     'SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name',
@@ -1143,6 +1209,12 @@ const commands = [
   option
     .setName("user")
     .setDescription("Who receives the balls")
+    .setRequired(true)
+)
+.addStringOption(option =>
+  option
+    .setName("balls")
+    .setDescription("Balls to give, separated by commas")
     .setRequired(true)
 ),
   
