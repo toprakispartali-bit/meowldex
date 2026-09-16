@@ -904,10 +904,58 @@ const ballEmojis = {
 };
 
 async function handleInteraction(interaction) {
-  if (interaction.isAutocomplete()) {
-    // your autocomplete stuff...
-    return interaction.respond(suggestions(names, focused.value));
+ if (interaction.isAutocomplete()) {
+  const focused = interaction.options.getFocused(true);
+
+  if (interaction.commandName === 'ballgive' && focused.name === 'balls') {
+    const owned = await query(
+      'SELECT ball_name, quantity FROM collections WHERE user_id = ? AND quantity > 0 ORDER BY ball_name',
+      [interaction.user.id]
+    );
+
+    // Makes duplicates available too:
+    // England x2 -> England, England
+    const ownedNames = owned.rows.flatMap(row =>
+      Array(Number(row[1].value)).fill(row[0].value)
+    );
+
+    const fullInput = focused.value;
+    const parts = fullInput.split(',');
+
+    // Everything before the ball currently being typed
+    const prefix = parts.slice(0, -1)
+      .map(x => x.trim())
+      .filter(Boolean);
+
+    const current = parts[parts.length - 1].trim().toLowerCase();
+
+    const matches = ownedNames
+      .filter(name => name.toLowerCase().includes(current))
+      .slice(0, 25);
+
+    return interaction.respond(
+      matches.map(name => {
+        const value = [...prefix, name].join(', ');
+
+        return {
+          name,
+          value
+        };
+      })
+    );
   }
+
+  if (
+    interaction.commandName === 'previewball' &&
+    focused.name === 'countryball'
+  ) {
+    return interaction.respond(
+      suggestions(Object.keys(balls), focused.value)
+    );
+  }
+
+  return interaction.respond([]);
+}
 
   // PASTE THE NEW BALLGIVE SELECT-MENU BLOCK HERE
 
@@ -1174,6 +1222,7 @@ const commands = [
     .setName("balls")
     .setDescription("Balls to give, separated by commas")
     .setRequired(true)
+    .setAutocomplete(true)
 ),
   
   new SlashCommandBuilder()
