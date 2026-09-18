@@ -970,7 +970,8 @@ const ballEmojis = {
   "Haiti": "<:haiti:1550594746299195522>",
   "Georgia": "<:georgia:1550596100627628102>",
   "Nigeria": "<:nigeria:1550598412834185337>",
-  "England": "<:england:1550602358235340830>"
+  "England": "<:england:1550602358235340830>",
+  "Morocco": "<:morocco:1550607552297836634>"
 };
 
 async function handleInteraction(interaction) {
