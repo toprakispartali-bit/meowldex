@@ -132,7 +132,6 @@ const balls = {
 "Indonesia": "Legendary",
 "Vietnam": "Legendary",
 "Singapore": "Mythic",
-"North Korea": "Legendary",
 "Turkmenistan": "Rare",
 "Uzbekistan": "Rare",
 "Thailand": "Rare",
@@ -1334,27 +1333,27 @@ for (let i = 0; i < commonEmojis.length; i += 20) {
   lines.push(commonEmojis.slice(i, i + 20).join(' '));
 }
 
-return interaction.reply(
-  `⚪ **Common Balls**\n\n` +
-  (lines.join('\n') || "No Common ball emojis added yet.") +
-  `\n\n\n**Page 1/7 — Common**`,
-  {
-    components: [
-      new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId('rarities_prev_0')
-          .setLabel('⬅️')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(true),
+return interaction.reply({
+  content:
+    `**Common Tier Balls**\n\n` +
+    (lines.join('\n') || "No Common ball emojis added yet.") +
+    `\n\n\n**Page 1/7 — Common**`,
 
-        new ButtonBuilder()
-          .setCustomId('rarities_next_0')
-          .setLabel('➡️')
-          .setStyle(ButtonStyle.Secondary)
-      )
-    ]
-  }
-);
+  components: [
+    new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId('rarities_prev_0')
+        .setLabel('⬅️')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(true),
+
+      new ButtonBuilder()
+        .setCustomId('rarities_next_0')
+        .setLabel('➡️')
+        .setStyle(ButtonStyle.Secondary)
+    )
+  ]
+});
   }
 }
 
