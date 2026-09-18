@@ -951,7 +951,7 @@ const ballEmojis = {
   "Bosnia and Herzegovina": "<:bosniaandherzegovina:1549463847369187388>",
   "Niger": "<:niger:1549474580853297262>",
   "United States of America": "<:unitedstatesofamerica:1549482690284101802>",
-  "Northern Ireland": "<:northernireland:1549806309598040094>",
+  "Northern Ireland": "<:northernireland:1550599314278055967>",
   "Bulgaria": "<:bulgaria:1549807095514406972>",
   "Panama": "<:panama:1549832562715791440>",
   "Gabon": "<:gabon:1549833512369127424>",
@@ -968,7 +968,8 @@ const ballEmojis = {
   "Myanmar": "<:myanmar:1550593146935840849>",
   "Estonia": "<:estonia:1550593809258385408>",
   "Haiti": "<:haiti:1550594746299195522>",
-  "Georgia": "<:georgia:1550596100627628102>"
+  "Georgia": "<:georgia:1550596100627628102>",
+  "Nigeria": "<:nigeria:1550598412834185337>"
 };
 
 async function handleInteraction(interaction) {
