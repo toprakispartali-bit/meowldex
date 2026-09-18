@@ -964,7 +964,7 @@ const ballEmojis = {
   "Saint Kitts and Nevis": "<:saintkittsandnevis:1550175688370290778>",
   "Colombia": "<:colombia:1550179024989462529>",
   "Qatar": "<:qatar:1550204404563714228>",
-  "Timor-Leste": "<:timor-leste:1550543965558669433>"
+  "Timor-Leste": "<:timorleste:1550543965558669433>"
 };
 
 async function handleInteraction(interaction) {
@@ -1073,7 +1073,7 @@ if (interaction.isButton() && interaction.customId.startsWith('rarities_')) {
     content:
       `**${rarity} Balls**\n\n` +
       (lines.join('\n') || `No ${rarity} ball emojis added yet.`) +
-      `\n\n**Page ${newPage + 1}/${rarities.length} — ${rarity}**`,
+      `\n\n\n**Page ${newPage + 1}/${rarities.length} — ${rarity}**`,
     components: [row]
   });
 }
@@ -1335,9 +1335,9 @@ for (let i = 0; i < commonEmojis.length; i += 20) {
 }
 
 return interaction.reply(
-  `⚪ **Common Balls**\n\n` +
-  (lines.join('\n') || "No Common ball emojis added yet.") +
-  `**Page 1/7 — Common**`,
+  `**Common Tier Balls**\n\n` +
+ (lines.join('\n') || "No Common ball emojis added yet.") +
+`\n\n\n**Page 1/7 — Common**`
 {
   components: [
     new ActionRowBuilder().addComponents(
