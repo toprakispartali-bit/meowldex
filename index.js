@@ -966,7 +966,9 @@ const ballEmojis = {
   "Timor-Leste": "<:timorleste:1550543965558669433>",
   "Chile": "<:chile:1550592199110955019>",
   "Myanmar": "<:myanmar:1550593146935840849>",
-  "Estonia": "<:estonia:1550593809258385408>"
+  "Estonia": "<:estonia:1550593809258385408>",
+  "Haiti": "<:haiti:1550594746299195522>",
+  "Georgia": "<:georgia:1550596100627628102>"
 };
 
 async function handleInteraction(interaction) {
