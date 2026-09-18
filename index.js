@@ -963,7 +963,8 @@ const ballEmojis = {
   "Tanzania": "<:tanzania:1550173107132698736>",
   "Saint Kitts and Nevis": "<:saintkittsandnevis:1550175688370290778>",
   "Colombia": "<:colombia:1550179024989462529>",
-  "Qatar": "<:qatar:1550204404563714228>"
+  "Qatar": "<:qatar:1550204404563714228>",
+  "Timor-Leste": "<:timor-leste:1550543965558669433>"
 };
 
 async function handleInteraction(interaction) {
@@ -1023,6 +1024,59 @@ async function handleInteraction(interaction) {
   // PASTE THE NEW BALLGIVE SELECT-MENU BLOCK HERE
 
   // THEN your old code continues normally
+if (interaction.isButton() && interaction.customId.startsWith('rarities_')) {
+  const rarities = [
+    "Common",
+    "Uncommon",
+    "Rare",
+    "Legendary",
+    "Mythic",
+    "Superpower",
+    "Ancient"
+  ];
+
+  const parts = interaction.customId.split('_');
+  const direction = parts[1];
+  const currentPage = Number(parts[2]);
+
+  const newPage = direction === 'next'
+    ? currentPage + 1
+    : currentPage - 1;
+
+  const rarity = rarities[newPage];
+
+  const emojis = Object.keys(balls)
+    .filter(name => balls[name] === rarity && ballEmojis[name])
+    .map(name => ballEmojis[name]);
+
+  const lines = [];
+
+  for (let i = 0; i < emojis.length; i += 20) {
+    lines.push(emojis.slice(i, i + 20).join(' '));
+  }
+
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`rarities_prev_${newPage}`)
+      .setLabel('⬅️')
+      .setStyle(ButtonStyle.Secondary)
+      .setDisabled(newPage === 0),
+
+    new ButtonBuilder()
+      .setCustomId(`rarities_next_${newPage}`)
+      .setLabel('➡️')
+      .setStyle(ButtonStyle.Secondary)
+      .setDisabled(newPage === rarities.length - 1)
+  );
+
+  return interaction.update({
+    content:
+      `**${rarity} Balls**\n\n` +
+      (lines.join('\n') || `No ${rarity} ball emojis added yet.`) +
+      `\n\n**Page ${newPage + 1}/${rarities.length} — ${rarity}**`,
+    components: [row]
+  });
+}
   if (interaction.isButton() && interaction.customId === 'catch_ball') {
     // Opening the modal needs no network lookup, so slow database reads cannot time it out.
     // The saved spawn and answer are checked when the modal is submitted.
@@ -1269,10 +1323,38 @@ if (command === 'collection') {
     return interaction.editReply(`🛠️ **CRAFT SUCCESSFUL!**\n\n${recipe.ingredients.join(' + ')} → **${recipe.result}** ✨`);
   }
 
-  if (command === 'rarity') {
-    return interaction.reply('🌟 **MeowlDex Rarities** 🌟\n\n' +
-      '⚪ **Common**\n🟢 **Uncommon**\n🔵 **Rare**\n🟣 **Legendary**\n🔴 **Mythic**\n💪 **Superpower**\n🏺 **Ancient**\n\n' +
-      '**Ancient Balls:**\n• Xiongnu\n• Göktürk Khaganate\n• Ancient Egypt\n• Babylon\n• Hittite Empire\n• Assyrian Empire\n• Ancient Greece');
+  if (command === 'rarities') {
+    const commonEmojis = Object.keys(balls)
+  .filter(name => balls[name] === "Common" && ballEmojis[name])
+  .map(name => ballEmojis[name]);
+
+const lines = [];
+
+for (let i = 0; i < commonEmojis.length; i += 20) {
+  lines.push(commonEmojis.slice(i, i + 20).join(' '));
+}
+
+return interaction.reply(
+  `⚪ **Common Balls**\n\n` +
+  (lines.join('\n') || "No Common ball emojis added yet.") +
+  `**Page 1/7 — Common**`,
+{
+  components: [
+    new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId('rarities_prev_0')
+        .setLabel('⬅️')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(true),
+
+      new ButtonBuilder()
+        .setCustomId('rarities_next_0')
+        .setLabel('➡️')
+        .setStyle(ButtonStyle.Secondary)
+    )
+  ]
+}
+);
   }
 }
 
@@ -1312,8 +1394,8 @@ const commands = [
 ),
   
   new SlashCommandBuilder()
-    .setName("rarity")
-    .setDescription("Shows the MeowlDex rarity tiers"),
+  .setName("rarities")
+  .setDescription("Browse all MeowlDex balls by rarity"),
 
   new SlashCommandBuilder()
     .setName("collection")
