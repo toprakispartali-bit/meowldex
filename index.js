@@ -963,7 +963,10 @@ const ballEmojis = {
   "Saint Kitts and Nevis": "<:saintkittsandnevis:1550175688370290778>",
   "Colombia": "<:colombia:1550179024989462529>",
   "Qatar": "<:qatar:1550204404563714228>",
-  "Timor-Leste": "<:timorleste:1550543965558669433>"
+  "Timor-Leste": "<:timorleste:1550543965558669433>",
+  "Chile": "<:chile:1550592199110955019>",
+  "Myanmar": "<:myanmar:1550593146935840849>",
+  "Estonia": "<:estonia:1550593809258385408>"
 };
 
 async function handleInteraction(interaction) {
