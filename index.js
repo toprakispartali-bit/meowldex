@@ -1299,9 +1299,17 @@ if (command === 'collection') {
 
   if (command === 'previewball') {
     const name = resolveBall(interaction.options.getString('countryball', true));
-    if (!name || !customArt[name]) return interaction.reply("This country ball doesn't have an art yet!");
+    if (!name || !customArt[name]) {
+  const emoji = ballEmojis[name] || '';
+  return interaction.reply(
+    `**${name}** ${emoji} doesn't have an art yet.`
+  );
+}
     await interaction.deferReply();
-    return interaction.editReply({ content: `This is the present art of ${name}`, files: [customArt[name]] });
+   return interaction.editReply({
+  content: `This is the present art of **${name}** ${ballEmojis[name] || ''}`,
+  files: [customArt[name]]
+});
   }
 
   if (command === 'spawn') {
