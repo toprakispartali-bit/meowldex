@@ -1335,25 +1335,25 @@ for (let i = 0; i < commonEmojis.length; i += 20) {
 }
 
 return interaction.reply(
-  `**Common Tier Balls**\n\n` +
- (lines.join('\n') || "No Common ball emojis added yet.") +
-`\n\n\n**Page 1/7 — Common**`
-{
-  components: [
-    new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId('rarities_prev_0')
-        .setLabel('⬅️')
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true),
+  `⚪ **Common Balls**\n\n` +
+  (lines.join('\n') || "No Common ball emojis added yet.") +
+  `\n\n\n**Page 1/7 — Common**`,
+  {
+    components: [
+      new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId('rarities_prev_0')
+          .setLabel('⬅️')
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(true),
 
-      new ButtonBuilder()
-        .setCustomId('rarities_next_0')
-        .setLabel('➡️')
-        .setStyle(ButtonStyle.Secondary)
-    )
-  ]
-}
+        new ButtonBuilder()
+          .setCustomId('rarities_next_0')
+          .setLabel('➡️')
+          .setStyle(ButtonStyle.Secondary)
+      )
+    ]
+  }
 );
   }
 }
