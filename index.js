@@ -1665,6 +1665,7 @@ if (interaction.commandName === "list") {
     components: [row]
   });
 }
+}
 
 client.on('interactionCreate', interaction => {
   handleInteraction(interaction).catch(async error => {
