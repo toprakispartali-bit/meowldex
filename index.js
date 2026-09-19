@@ -689,19 +689,19 @@ const rarityOrder = [
   "Brazil",                           // #85
   "Egypt",                            // #86
   "Saudi Arabia",                     // #87
-  "Nigeria",                          // #88
+  "Morocco",                          // #88
   "Poland",                           // #89
   "South Korea",                      // #90
-  "Iran",                             // #91
+  "Nigeria",                          // #91
   "Mexico",                           // #92
   "Federation of South Arabia",       // #93
   "Indonesia",                        // #94
   "Australia",                        // #95
   "Canada",                           // #96
-  "Morocco",                          // #97
+  "Iran",                             // #97
   "Algeria",                          // #98
   "Argentina",                        // #99
-  "Colombia",                         // #100
+  "England",                          // #100
   "Vietnam",                          // #101
   "Kazakhstan",                       // #102
   "Romania",                          // #103
@@ -710,7 +710,7 @@ const rarityOrder = [
   "United Arab Emirates",             // #106
   "Palestine",                        // #107
   "Afghanistan",                      // #108
-  "England",                          // #109
+  "Colombia",                         // #109
   "Georgia",                          // #110
   "Armenia",                          // #111
   "Azerbaijan",                       // #112
@@ -785,30 +785,123 @@ const rarityOrder = [
   "Kingdom of Croatia-Slavonia",      // #181
   "Cretan State",                     // #182
   "Northern Ireland",                 // #183
-    "Serbia",                           // #160
-  "Bosnia and Herzegovina",           // #161
-  "Czechia",                          // #162
-  "Kingdom of Hejaz",                 // #163
-  "Democratic Republic of the Congo", // #164
-  "Libya",                            // #165
-  "Niger",                            // #166
-  "Namibia",                          // #167
-  "Myanmar",                          // #168
-  "Kingdom of Saxony",                // #169
-  "Qatar",                            // #170
-  "Jamaica",                          // #171
-  "Panama",                           // #172
-  "El Salvador",                      // #173
-  "Papua New Guinea",                 // #174
-  "Kingdom of Sardinia",              // #175
-  "Transvaal Republic",               // #176
-  "Orange Free State",                // #177
-  "Sri Lanka",                        // #178
-  "Kingdom of Naples",                // #179
-  "Kingdom of Sicily",                // #180
-  "Kingdom of Croatia-Slavonia",      // #181
-  "Cretan State",                     // #182
-  "Northern Ireland",                 // #183
+    "Kingdom of Bavaria",                    // #184
+  "Grand Duchy of Tuscany",                // #185
+  "Republic of Ragusa",                    // #186
+  "Kingdom of Hanover",                    // #187
+  "Helvetic Republic",                     // #188
+  "Taiwan",                                // #189
+  "Batavian Republic",                     // #190
+  "Kingdom of Württemberg",                // #191
+  "Republic of Cospaia",                   // #192
+  "Kingdom of Etruria",                    // #193
+  "Duchy of Parma",                        // #194
+  "Free State of Fiume",                   // #195
+  "United States of the Ionian Islands",   // #196
+  "Duchy of Modena and Reggio",            // #197
+  "Saar Protectorate",                     // #198
+  "Monaco",                                // #199
+  "Liechtenstein",                         // #200
+  "San Marino",                            // #201
+  "Andorra",                               // #202
+  "Malta",                                 // #203
+  "Ethiopia",                              // #204
+  "Kenya",                                 // #205
+  "Ghana",                                 // #206
+  "Cuba",                                  // #207
+  "Croatia",                               // #208
+  "Ireland",                               // #209
+  "Malaysia",                              // #210
+  "Nepal",                                 // #211
+  "Belarus",                               // #212
+  "Cyprus",                                // #213
+  "Kosovo",                                // #214
+  "Albania",                               // #215
+  "Jordan",                                // #216
+  "Lebanon",                               // #217
+  "Kuwait",                                // #218
+  "Oman",                                  // #219
+  "Bahrain",                               // #220
+  "Lithuania",                             // #221
+  "Estonia",                               // #222
+  "Latvia",                                // #223
+  "Slovakia",                              // #224
+  "Slovenia",                              // #225
+  "Moldova",                               // #226
+  "Montenegro",                            // #227
+  "North Macedonia",                       // #228
+  "Botswana",                              // #229
+  "Senegal",                               // #230
+  "Cameroon",                              // #231
+  "Angola",                                // #232
+  "Madagascar",                            // #233
+  "Mauritius",                             // #234
+  "Seychelles",                            // #235
+  "Gabon",                                 // #236
+  "Rwanda",                                // #237
+  "Zimbabwe",                              // #238
+  "Zambia",                                // #239
+  "Tanzania",                              // #240
+  "Uganda",                                // #241
+  "Mozambique",                            // #242
+  "Burkina Faso",                          // #243
+  "Mali",                                  // #244
+  "Mauritania",                            // #245
+  "Sudan",                                 // #246
+  "South Sudan",                           // #247
+  "Somalia",                               // #248
+  "Chad",                                  // #249
+  "Guinea",                                // #250
+  "Liberia",                               // #251
+  "Sierra Leone",                          // #252
+  "Gambia",                                // #253
+  "Burundi",                               // #254
+  "Republic of the Congo",                 // #255
+  "Eritrea",                               // #256
+  "Djibouti",                              // #257
+  "Eswatini",                              // #258
+  "Equatorial Guinea",                     // #259
+  "Guinea-Bissau",                         // #260
+  "Malawi",                                // #261
+  "Lesotho",                               // #262
+  "Comoros",                               // #263
+  "São Tomé and Príncipe",                 // #264
+  "Togo",                                  // #265
+  "Brunei",                                // #266
+  "Cambodia",                              // #267
+  "Laos",                                  // #268
+  "Tajikistan",                            // #269
+  "Timor-Leste",                           // #270
+  "Costa Rica",                            // #271
+  "Dominican Republic",                    // #272
+  "Guatemala",                             // #273
+  "Trinidad and Tobago",                   // #274
+  "Bahamas",                               // #275
+  "Barbados",                              // #276
+  "Belize",                                // #277
+  "Haiti",                                 // #278
+  "Honduras",                              // #279
+  "Nicaragua",                             // #280
+  "Antigua and Barbuda",                   // #281
+  "Dominica",                              // #282
+  "Grenada",                               // #283
+  "Saint Lucia",                           // #284
+  "Saint Vincent and the Grenadines",      // #285
+  "Saint Kitts and Nevis",                 // #286
+  "Bolivia",                               // #287
+  "Guyana",                                // #288
+  "Suriname",                              // #289
+  "Fiji",                                  // #290
+  "Samoa",                                 // #291
+  "Tonga",                                 // #292
+  "Solomon Islands",                       // #293
+  "Vanuatu",                               // #294
+  "Palau",                                 // #295
+  "Marshall Islands",                      // #296
+  "Micronesia",                            // #297
+  "Kiribati",                              // #298
+  "Nauru",                                 // #299
+  "Tuvalu"                                 // #300
 ];
 
 const rarityWeights = {
