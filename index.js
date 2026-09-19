@@ -559,13 +559,14 @@ const ballAliases = {
 
   "United States of America": [
     "United States",
-    "America"
+    "America",
+    "USA"
   ],
 
   "United Kingdom": [
-    "UK",
     "Britain",
-    "Great Britain"
+    "Great Britain",
+    "UK"
   ],
 
   "Turkiye": [
@@ -600,6 +601,214 @@ const ballAliases = {
 };
 
 const rarityOrder = [
+  "Ancient Egypt",                    // #1
+  "Xiongnu",                          // #2
+  "Sumer",                            // #3
+  "Babylon",                          // #4
+  "Göktürk Khaganate",                // #5
+  "Assyrian Empire",                  // #6
+  "Hittite Empire",                   // #7
+  "Ancient Greece",                   // #8
+  "Minoan Civilization",              // #9
+  "Mycenaean Greece",                 // #10
+  "Alaouite Dynasty",                 // #11
+  "Maya Civilization",                // #12
+  "Aztec Empire",                     // #13
+  "Inca Empire",                      // #14
+  "Carthage",                         // #15
+
+  "Roman Empire",                     // #16
+  "Mongol Empire",                    // #17
+  "Ottoman Empire",                   // #18
+  "British Empire",                   // #19
+  "Soviet Union",                     // #20
+  "Achaemenid Empire",                // #21
+  "Byzantine Empire",                 // #22
+  "Holy Roman Empire",                // #23
+  "Han Dynasty",                      // #24
+  "Qing Dynasty",                     // #25
+  "Umayyad Caliphate",                // #26
+  "Russian Empire",                   // #27
+  "Spanish Empire",                   // #28
+  "Portuguese Empire",                // #29
+  "Seljuk Empire",                    // #30
+  "First French Empire",              // #31
+  "Napoleonic France",                // #32
+  "German Empire",                    // #33
+  "Austria-Hungary",                  // #34
+  "Polish-Lithuanian Commonwealth",   // #35
+  "Empire of Japan",                  // #36
+  "Nazi Germany",                     // #37
+  "Almohad Caliphate",                // #38
+  "United States of America",         // #39
+  "Russia",                           // #40
+  "China",                            // #41
+  "India",                            // #42
+  "Vatican City",              // #43
+  "Prussia",                   // #44
+  "Kingdom of Jerusalem",      // #45
+  "Knights Hospitaller",       // #46
+  "Republic of Venice",        // #47
+  "Czechoslovakia",            // #48
+  "Yugoslavia",                // #49
+  "East Germany",              // #50
+  "West Germany",              // #51
+  "Gran Colombia",             // #52
+  "Tibet",                     // #53
+  "Kingdom of Hawaii",         // #54
+  "Greenland",                 // #55
+  "Antarctica",                // #56
+  "Dacian Kingdom",            // #57
+  "Pakistan",                  // #58
+  "Singapore",                 // #59
+  "North Korea",               // #60
+  "Pirate Republic",           // #61
+  "Free City of Danzig",       // #62
+  "Neutral Moresnet",          // #63
+  "Sealand",                   // #64
+  "Liberland",                 // #65
+  "Verdis",                    // #66
+  "Molossia",                  // #67
+  "Safavid Empire",            // #68
+    "Mughal Empire",                  // #69
+  "Austrian Empire",                  // #70
+  "Timurid Empire",                   // #71
+  "Maurya Empire",                    // #72
+  "Republic of China",                // #73
+  "Maratha Empire",                   // #74
+  "Turkiye",                          // #75
+  "Japan",                            // #76
+  "France",                           // #77
+  "United Kingdom",                   // #78
+  "First Mexican Empire",             // #79
+  "Kingdom of Greece",                // #80
+  "United Arab Republic",             // #81
+  "Republic of Texas",                // #82
+  "Italy",                            // #83
+  "Spain",                            // #84
+  "Brazil",                           // #85
+  "Egypt",                            // #86
+  "Saudi Arabia",                     // #87
+  "Nigeria",                          // #88
+  "Poland",                           // #89
+  "South Korea",                      // #90
+  "Iran",                             // #91
+  "Mexico",                           // #92
+  "Federation of South Arabia",       // #93
+  "Indonesia",                        // #94
+  "Australia",                        // #95
+  "Canada",                           // #96
+  "Morocco",                          // #97
+  "Algeria",                          // #98
+  "Argentina",                        // #99
+  "Colombia",                         // #100
+  "Vietnam",                          // #101
+  "Kazakhstan",                       // #102
+  "Romania",                          // #103
+  "Switzerland",                      // #104
+  "Norway",                           // #105
+  "United Arab Emirates",             // #106
+  "Palestine",                        // #107
+  "Afghanistan",                      // #108
+  "England",                          // #109
+  "Georgia",                          // #110
+  "Armenia",                          // #111
+  "Azerbaijan",                       // #112
+  "Luxembourg",                       // #113
+ "Empire of Brazil",                       // #114
+  "Kingdom of the Two Sicilies",            // #115
+  "Grand Duchy of Finland",                  // #116
+  "Kingdom of Egypt",                        // #117
+  "Mutawakkilite Kingdom of Yemen",          // #118
+  "Kingdom of Romania",                      // #119
+  "Germany",                                 // #120
+  "Kingdom of Serbia",                       // #121
+  "South Africa",                            // #122
+  "Kingdom of Bulgaria",                     // #123
+  "Kingdom of Libya",                        // #124
+  "Ukraine",                                 // #125
+  "Kingdom of Albania",                      // #126
+  "Sweden",                                  // #127
+  "Portugal",                                // #128
+  "Netherlands",                             // #129
+  "Belgium",                                 // #130
+  "Kingdom of Iceland",                      // #131
+  "Austria",                                 // #132
+  "Hungary",                                 // #133
+  "Bulgaria",                                // #134
+  "Denmark",                                 // #135
+  "Finland",                                 // #136
+  "Iceland",                                 // #137
+  "Scotland",                                // #138
+  "Wales",                                   // #139
+  "Tunisia",                                 // #140
+  "Cape Verde",                              // #141
+  "Iraq",                                    // #142
+  "Syria",                                   // #143
+  "Yemen",                                   // #144
+  "Thailand",                                // #145
+  "Uzbekistan",                              // #146
+  "Turkmenistan",                            // #147
+  "Mongolia",                                // #148
+  "Philippines",                             // #149
+  "Bangladesh",                              // #150
+  "Kyrgyzstan",                              // #151
+  "Bhutan",                                  // #152
+  "Venezuela",                               // #153
+  "Peru",                                    // #154
+  "Uruguay",                                 // #155
+  "Paraguay",                                // #156
+  "Ecuador",                                 // #157
+  "New Zealand",                             // #158
+  "Central African Republic",                // #159
+    "Serbia",                           // #160
+  "Bosnia and Herzegovina",           // #161
+  "Czechia",                          // #162
+  "Kingdom of Hejaz",                 // #163
+  "Democratic Republic of the Congo", // #164
+  "Libya",                            // #165
+  "Niger",                            // #166
+  "Namibia",                          // #167
+  "Myanmar",                          // #168
+  "Kingdom of Saxony",                // #169
+  "Qatar",                            // #170
+  "Jamaica",                          // #171
+  "Panama",                           // #172
+  "El Salvador",                      // #173
+  "Papua New Guinea",                 // #174
+  "Kingdom of Sardinia",              // #175
+  "Transvaal Republic",               // #176
+  "Orange Free State",                // #177
+  "Sri Lanka",                        // #178
+  "Kingdom of Naples",                // #179
+  "Kingdom of Sicily",                // #180
+  "Kingdom of Croatia-Slavonia",      // #181
+  "Cretan State",                     // #182
+  "Northern Ireland",                 // #183
+    "Serbia",                           // #160
+  "Bosnia and Herzegovina",           // #161
+  "Czechia",                          // #162
+  "Kingdom of Hejaz",                 // #163
+  "Democratic Republic of the Congo", // #164
+  "Libya",                            // #165
+  "Niger",                            // #166
+  "Namibia",                          // #167
+  "Myanmar",                          // #168
+  "Kingdom of Saxony",                // #169
+  "Qatar",                            // #170
+  "Jamaica",                          // #171
+  "Panama",                           // #172
+  "El Salvador",                      // #173
+  "Papua New Guinea",                 // #174
+  "Kingdom of Sardinia",              // #175
+  "Transvaal Republic",               // #176
+  "Orange Free State",                // #177
+  "Sri Lanka",                        // #178
+  "Kingdom of Naples",                // #179
+  "Kingdom of Sicily",                // #180
+  "Kingdom of Croatia-Slavonia",      // #181
+  "Cretan State",                     // #182
+  "Northern Ireland",                 // #183
 ];
 
 const rarityWeights = {
@@ -1087,6 +1296,52 @@ if (interaction.isButton() && interaction.customId.startsWith('rarities_')) {
     components: [row]
   });
 }
+
+if (interaction.isButton() && interaction.customId.startsWith('list_')) {
+  const parts = interaction.customId.split('_');
+  const direction = parts[1];
+  const currentPage = Number(parts[2]);
+
+  const pageSize = 25;
+  const totalPages = Math.ceil(rarityOrder.length / pageSize);
+
+  const newPage = direction === 'next'
+    ? currentPage + 1
+    : currentPage - 1;
+
+  const start = newPage * pageSize;
+  const pageBalls = rarityOrder.slice(start, start + pageSize);
+
+  const content = pageBalls
+    .map((name, index) => {
+      const rank = start + index + 1;
+      const emoji = ballEmojis[name] || "";
+      return `**#${rank}** ${emoji} ${name}`;
+    })
+    .join('\n');
+
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`list_prev_${newPage}`)
+      .setLabel('◀')
+      .setStyle(ButtonStyle.Secondary)
+      .setDisabled(newPage === 0),
+
+    new ButtonBuilder()
+      .setCustomId(`list_next_${newPage}`)
+      .setLabel('▶')
+      .setStyle(ButtonStyle.Secondary)
+      .setDisabled(newPage === totalPages - 1)
+  );
+
+  return interaction.update({
+    content:
+      `**MeowlDex Global Rarity Ranking**\n` +
+      `**Page ${newPage + 1}/${totalPages}**\n\n${content}`,
+    components: [row]
+  });
+}
+  
   if (interaction.isButton() && interaction.customId === 'catch_ball') {
     // Opening the modal needs no network lookup, so slow database reads cannot time it out.
     // The saved spawn and answer are checked when the modal is submitted.
@@ -1376,6 +1631,42 @@ return interaction.reply({
   }
 }
 
+if (interaction.commandName === "list") {
+  const pageSize = 25;
+  const totalPages = Math.ceil(rarityOrder.length / pageSize);
+  const page = 0;
+
+  const start = page * pageSize;
+  const pageBalls = rarityOrder.slice(start, start + pageSize);
+
+  const content = pageBalls
+    .map((name, index) => {
+      const rank = start + index + 1;
+      const emoji = ballEmojis[name] || "";
+      return `**#${rank}** ${emoji} ${name}`;
+    })
+    .join("\n");
+
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`list_prev_${page}`)
+      .setLabel("◀")
+      .setStyle(ButtonStyle.Secondary)
+      .setDisabled(true),
+
+    new ButtonBuilder()
+      .setCustomId(`list_next_${page}`)
+      .setLabel("▶")
+      .setStyle(ButtonStyle.Secondary)
+      .setDisabled(totalPages <= 1)
+  );
+
+  return interaction.reply({
+    content: `**MeowlDex Global Rarity Ranking**\n**Page 1/${totalPages}**\n\n${content}`,
+    components: [row]
+  });
+}
+
 client.on('interactionCreate', interaction => {
   handleInteraction(interaction).catch(async error => {
     console.error('INTERACTION ERROR:', error);
@@ -1414,6 +1705,10 @@ const commands = [
   new SlashCommandBuilder()
   .setName("rarities")
   .setDescription("Browse all MeowlDex balls by rarity"),
+
+ new SlashCommandBuilder()
+  .setName("list")
+  .setDescription("View the global MeowlDex rarity ranking"),
 
   new SlashCommandBuilder()
     .setName("collection")
@@ -1467,9 +1762,6 @@ const commands = [
       .setRequired(true)
       .setAutocomplete(true)
   )
-].map(command => command.toJSON());
-
-
 async function start() {
   for (const key of ['DISCORD_TOKEN', 'TURSO_DATABASE_URL', 'TURSO_AUTH_TOKEN']) {
     if (!process.env[key]) {
