@@ -1803,6 +1803,7 @@ async function start() {
   });
 
   await client.login(process.env.DISCORD_TOKEN);
+}
 
 if (require.main === module) {
   start().catch(error => {
