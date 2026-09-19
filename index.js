@@ -1803,7 +1803,6 @@ async function start() {
   });
 
   await client.login(process.env.DISCORD_TOKEN);
-}async function start() {
   for (const key of ['DISCORD_TOKEN', 'TURSO_DATABASE_URL', 'TURSO_AUTH_TOKEN']) {
     if (!process.env[key]) {
       throw new Error(`Missing environment variable: ${key}`);
