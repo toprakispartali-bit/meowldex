@@ -1249,7 +1249,7 @@ async function sendLongReply(interaction, content) {
 }
 
 const ballEmojis = {
-  "Turkiye": "<:turkiye:1549137258320363601>",
+  "Turkiye": "<:turkiye:1550965053564387338>",
   "Jamaica": "<:jamaica:1549456606293655696>",
   "Tunisia": "<:tunisia:1549460632666116151>",
   "Botswana": "<:botswana:1549462864660529292>",
@@ -1276,7 +1276,8 @@ const ballEmojis = {
   "Georgia": "<:georgia:1550596100627628102>",
   "Nigeria": "<:nigeria:1550598412834185337>",
   "England": "<:england:1550602358235340830>",
-  "Morocco": "<:morocco:1550607552297836634>"
+  "Morocco": "<:morocco:1550607552297836634>",
+  "United Kingdom": "<:unitedkingdom:1550969411202977882>"
 };
 
 async function handleInteraction(interaction) {
