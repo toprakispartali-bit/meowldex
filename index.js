@@ -1629,7 +1629,6 @@ return interaction.reply({
   ]
 });
   }
-}
 
 if (interaction.commandName === "list") {
   const pageSize = 25;
