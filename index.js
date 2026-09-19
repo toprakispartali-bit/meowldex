@@ -1762,6 +1762,7 @@ const commands = [
       .setRequired(true)
       .setAutocomplete(true)
   )
+];
 async function start() {
   for (const key of ['DISCORD_TOKEN', 'TURSO_DATABASE_URL', 'TURSO_AUTH_TOKEN']) {
     if (!process.env[key]) {
