@@ -599,6 +599,9 @@ const ballAliases = {
   ]
 };
 
+const rarityOrder = [
+];
+
 const rarityWeights = {
   "Common": 49,
   "Uncommon": 24,
