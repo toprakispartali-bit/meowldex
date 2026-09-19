@@ -1420,7 +1420,6 @@ if (command === 'ballgive') {
       ephemeral: true
     });
   }
-  }
 
   await interaction.deferReply();
 
