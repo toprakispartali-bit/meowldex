@@ -1770,7 +1770,9 @@ async function start() {
     }
   }
 
-  await setupTursoDatabase();
+  console.log("STEP 1: starting database");
+await setupTursoDatabase();
+console.log("STEP 2: database finished");
 
   const rest = new REST({ version: "10" })
     .setToken(process.env.DISCORD_TOKEN);
