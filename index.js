@@ -1803,46 +1803,6 @@ async function start() {
   });
 
   await client.login(process.env.DISCORD_TOKEN);
-  for (const key of ['DISCORD_TOKEN', 'TURSO_DATABASE_URL', 'TURSO_AUTH_TOKEN']) {
-    if (!process.env[key]) {
-      throw new Error(`Missing environment variable: ${key}`);
-    }
-  }
-
-  await setupTursoDatabase();
-
-  const rest = new REST({ version: "10" })
-    .setToken(process.env.DISCORD_TOKEN);
-
-  console.log("Registering slash commands...");
-
-  const guilds = [
-    "1549135179245686854"
-  ];
-
-  for (const guildId of guilds) {
-    const result = await rest.put(
-      Routes.applicationGuildCommands(
-        "1546632087430373416",
-        guildId
-      ),
-      { body: commands }
-    );
-
-    console.log(`Registered ${result.length} commands in ${guildId}`);
-  }
-
-  console.log("Slash commands registered!");
-
-  client.once("ready", () => {
-    console.log(`MeowlDex is ready as ${client.user.tag}`);
-    restoreSpawnTimers().catch(error =>
-      console.error("SPAWN RESTORE ERROR:", error)
-    );
-  });
-
-  await client.login(process.env.DISCORD_TOKEN);
-}
 
 if (require.main === module) {
   start().catch(error => {
