@@ -1318,7 +1318,17 @@ const ballEmojis = {
   "Nigeria": "<:nigeria:1550598412834185337>",
   "England": "<:england:1550602358235340830>",
   "Morocco": "<:morocco:1550607552297836634>",
-  "United Kingdom": "<:unitedkingdom:1550969411202977882>"
+  "United Kingdom": "<:unitedkingdom:1550969411202977882>",
+  "Ottoman Empire": "<:ottomanempire:1551095685355671602>",
+  "Germany": "<:germany:1551101880015261846>",
+  "Italy": "<:italy:1551103701832437831>",
+  "Papua New Guinea": "<:papuanewguinea:1551104341891358740>",
+  "Guyana": "<:guyana:1551106715112439849>",
+  "North Macedonia": "<:northmacedonia:1551111936182198422>",
+  "Libya": "<:libya:1551204650655555658>",
+  "Palestine": "<:palestine:1551208509268426952>",
+  "El Salvador": "<:elsalvador:1551206017012863067>",
+  "Malaysia": "<:malaysia:1551212426995826688>",
 };
 
 async function handleInteraction(interaction) {
