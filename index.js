@@ -1746,7 +1746,13 @@ const emoji = ballEmojis[ballName] || '';
 
 if (total === 0) {
   return interaction.editReply(
-    `You don't own a ${ballName} ${emoji} ball yet.`
+    `You don't own ${
+  /^uni/i.test(ballName)
+    ? 'a'
+    : /^[aeiou]/i.test(ballName)
+      ? 'an'
+      : 'a'
+} ${ballName} ${emoji} ball yet.`
   );
 }
 
