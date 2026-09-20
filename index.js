@@ -1361,6 +1361,22 @@ async function handleInteraction(interaction) {
         };
       })
     );
+
+if (interaction.commandName === 'collection' && focused.name === 'ball') {
+  const current = focused.value.toLowerCase();
+
+  const matches = balls
+    .filter(ball => ball.toLowerCase().includes(current))
+    .slice(0, 25);
+
+  return interaction.respond(
+    matches.map(ball => ({
+      name: ball,
+      value: ball
+    }))
+  );
+}
+    
   }
 
   if (
@@ -1672,7 +1688,7 @@ if (command === 'ballgive') {
 );
   }
 
-if (command === 'collection') {
+if (command === 'inventory') {
   await interaction.deferReply();
 
   const result = await query(
@@ -1694,11 +1710,55 @@ if (command === 'collection') {
 
   return sendLongReply(
     interaction,
-    `📚 **${interaction.user.username}'s MeowlDex Collection**\n\n` +
+    `**${interaction.user}'s MeowlDex Inventory**\n\n` +
     (list || "You haven't caught any balls yet!")
   );
 }
 
+if (command === 'collection') {
+  await interaction.deferReply();
+
+  const ballName = interaction.options.getString('ball', true);
+  const targetUser = interaction.options.getUser('user') || interaction.user;
+
+  if (!balls.includes(ballName)) {
+  return interaction.editReply('That ball does not exist.');
+}
+
+  const normalResult = await query(
+    'SELECT quantity FROM collections WHERE user_id = ? AND ball_name = ?',
+    [targetUser.id, ballName]
+  );
+
+  const variantResult = await query(
+    `SELECT trait, quantity FROM collection_variants
+     WHERE user_id = ? AND ball_name = ? AND quantity > 0`,
+    [targetUser.id, ballName]
+  );
+
+  const total = normalResult.rows.length
+    ? Number(normalResult.rows[0][0].value)
+    : 0;
+
+  const halloweenRow = variantResult.rows.find(
+    row => row[0].value === 'Halloween'
+  );
+
+  const halloween = halloweenRow
+    ? Number(halloweenRow[1].value)
+    : 0;
+
+  const normal = Math.max(0, total - halloween);
+  const emoji = ballEmojis[ballName] || '';
+
+  return interaction.editReply(
+    `${emoji} **${ballName} Collection — ${targetUser}**\n\n` +
+    `Normal: ×${normal}\n` +
+    `🎃 Halloween: ×${halloween}\n` +
+    `**Total: ${total}**`
+  );
+}
+  
   if (command === 'previewball') {
     const name = resolveBall(interaction.options.getString('countryball', true));
     if (!name || !customArt[name]) {
@@ -1855,8 +1915,23 @@ const commands = [
   .setDescription("View the global MeowlDex rarity ranking"),
 
   new SlashCommandBuilder()
-    .setName("collection")
+    .setName("inventory")
     .setDescription("Shows your MeowlDex collection"),
+
+  new SlashCommandBuilder()
+  .setName('collection')
+  .setDescription("View a user's collection of a specific ball")
+  .addStringOption(option =>
+    option
+      .setName('ball')
+      .setDescription('Choose a ball')
+      .setRequired(true)
+      .setAutocomplete(true))
+  .addUserOption(option =>
+    option
+      .setName('user')
+      .setDescription("Whose collection to view")
+      .setRequired(false)),
 
   new SlashCommandBuilder()
     .setName("compare")
