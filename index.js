@@ -314,7 +314,7 @@ const balls = {
 "Austria-Hungary": "Superpower",
 "German Empire": "Superpower",
 "Nazi Germany": "Superpower",
-"Umayyad Caliphate": "Superpower",
+"Umayyad Caliphate": "Ancient",
 "Seljuk Empire": "Superpower",
   "Soviet Union": "Superpower",
 
@@ -606,28 +606,28 @@ const rarityOrder = [
   "Sumer",                            // #3
   "Babylon",                          // #4
   "Göktürk Khaganate",                // #5
-  "Assyrian Empire",                  // #6
-  "Hittite Empire",                   // #7
-  "Ancient Greece",                   // #8
-  "Minoan Civilization",              // #9
-  "Mycenaean Greece",                 // #10
-  "Alaouite Dynasty",                 // #11
-  "Maya Civilization",                // #12
-  "Aztec Empire",                     // #13
-  "Inca Empire",                      // #14
-  "Carthage",                         // #15
+  "Umayyad Caliphate",                // #6
+  "Assyrian Empire",                  // #7
+  "Hittite Empire",                   // #8
+  "Ancient Greece",                   // #9
+  "Minoan Civilization",              // #10
+  "Mycenaean Greece",                 // #11
+  "Alaouite Dynasty",                 // #12
+  "Maya Civilization",                // #13
+  "Aztec Empire",                     // #14
+  "Inca Empire",                      // #15
+  "Carthage",                         // #16
 
-  "Roman Empire",                     // #16
-  "Mongol Empire",                    // #17
-  "Ottoman Empire",                   // #18
-  "British Empire",                   // #19
-  "Soviet Union",                     // #20
-  "Achaemenid Empire",                // #21
-  "Byzantine Empire",                 // #22
-  "Holy Roman Empire",                // #23
-  "Han Dynasty",                      // #24
-  "Qing Dynasty",                     // #25
-  "Umayyad Caliphate",                // #26
+  "Roman Empire",                     // #17
+  "Mongol Empire",                    // #18
+  "Ottoman Empire",                   // #19
+  "British Empire",                   // #20
+  "Soviet Union",                     // #21
+  "Achaemenid Empire",                // #22
+  "Byzantine Empire",                 // #23
+  "Holy Roman Empire",                // #24
+  "Han Dynasty",                      // #25
+  "Qing Dynasty",                     // #26
   "Russian Empire",                   // #27
   "Spanish Empire",                   // #28
   "Portuguese Empire",                // #29
@@ -691,7 +691,7 @@ const rarityOrder = [
   "Saudi Arabia",                     // #87
   "Morocco",                          // #88
   "Poland",                           // #89
-  "South Korea",                      // #90
+  "Empire of Brazil",                 // #90
   "Nigeria",                          // #91
   "Mexico",                           // #92
   "Federation of South Arabia",       // #93
@@ -704,7 +704,7 @@ const rarityOrder = [
   "England",                          // #100
   "Vietnam",                          // #101
   "Kazakhstan",                       // #102
-  "Romania",                          // #103
+  "South Korea",                          // #103
   "Switzerland",                      // #104
   "Norway",                           // #105
   "United Arab Emirates",             // #106
@@ -714,8 +714,8 @@ const rarityOrder = [
   "Georgia",                          // #110
   "Armenia",                          // #111
   "Azerbaijan",                       // #112
-  "Luxembourg",                       // #113
- "Empire of Brazil",                       // #114
+  "Romania",                       // #113
+ "Luxembourg",                       // #114
   "Kingdom of the Two Sicilies",            // #115
   "Grand Duchy of Finland",                  // #116
   "Kingdom of Egypt",                        // #117
@@ -1277,7 +1277,8 @@ const ballEmojis = {
   "Nigeria": "<:nigeria:1550598412834185337>",
   "England": "<:england:1550602358235340830>",
   "Morocco": "<:morocco:1550607552297836634>",
-  "United Kingdom": "<:unitedkingdom:1550969411202977882>"
+  "United Kingdom": "<:unitedkingdom:1550969411202977882>",
+  
 };
 
 async function handleInteraction(interaction) {
@@ -1476,14 +1477,15 @@ if (interaction.isButton() && interaction.customId.startsWith('list_')) {
     if (!claimed) return interaction.editReply('This spawn was caught or expired before your answer could be saved.');
     clearExpiry(messageId);
     const correctMessages = [
-  `${interaction.user} caught **${claimed.ballName}**!`,
-  `${interaction.user} successfully caught **${claimed.ballName}**!`,
-  `${interaction.user} got it! It was **${claimed.ballName}**!`,
-  `${interaction.user} guessed correctly! The ball was **${claimed.ballName}**!`,
-  `${interaction.user} secured **${claimed.ballName}**!`,
-  `Nice one, ${interaction.user}! You caught **${claimed.ballName}**!`,
-  `${interaction.user} knew the ball, it was **${claimed.ballName}**!`,
-  `${interaction.user} has good ball knowledge, they caught **${claimed.ballName}**!`
+  `${interaction.user} caught **${claimed.ballName}** ${ballEmojis[claimed.ballName] || ""}`,
+  `${interaction.user} successfully caught **${claimed.ballName}** ${ballEmojis[claimed.ballName] || ""}`,
+  `${interaction.user} got it! It was **${claimed.ballName}** ${ballEmojis[claimed.ballName] || ""}`,
+  `${interaction.user} guessed correctly! The ball was **${claimed.ballName}** ${ballEmojis[claimed.ballName] || ""}`,
+  `${interaction.user} secured **${claimed.ballName}** ${ballEmojis[claimed.ballName] || ""}`,
+  `Nice one, ${interaction.user}! You caught **${claimed.ballName}** ${ballEmojis[claimed.ballName] || ""}`,
+  `${interaction.user} knew the ball, it was **${claimed.ballName}** ${ballEmojis[claimed.ballName] || ""}`,
+  `${interaction.user} has good ball knowledge, they caught **${claimed.ballName}** ${ballEmojis[claimed.ballName] || ""}`,
+  `**${claimed.ballName}** ${ballEmojis[claimed.ballName] || ""} got caught by ${interaction.user}!`
 ];
 const randomCorrect =
   correctMessages[Math.floor(Math.random() * correctMessages.length)];
