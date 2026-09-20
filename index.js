@@ -1534,7 +1534,7 @@ await interaction.editReply({
   content:
     randomCorrect +
     (claimed.trait === 'Halloween'
-      ? '\n*Spooky ball you got there! Happy Halloween! 🎃*'
+      ? '\n\n*Spooky ball you got there! Happy Halloween! 🎃*'
       : '') +
     (claimed.isTest
       ? '\nTest spawn — not added to your collection.'
