@@ -1362,18 +1362,12 @@ async function handleInteraction(interaction) {
       })
     );
 
-if (interaction.commandName === 'collection' && focused.name === 'ball') {
-  const current = focused.value.toLowerCase();
-
-  const matches = balls
-    .filter(ball => ball.toLowerCase().includes(current))
-    .slice(0, 25);
-
+if (
+  interaction.commandName === 'collection' &&
+  focused.name === 'ball'
+) {
   return interaction.respond(
-    matches.map(ball => ({
-      name: ball,
-      value: ball
-    }))
+    suggestions(Object.keys(balls), focused.value)
   );
 }
     
@@ -1721,10 +1715,9 @@ if (command === 'collection') {
   const ballName = interaction.options.getString('ball', true);
   const targetUser = interaction.options.getUser('user') || interaction.user;
 
-  if (!balls.includes(ballName)) {
+  if (!Object.keys(balls).includes(ballName)) {
   return interaction.editReply('That ball does not exist.');
 }
-
   const normalResult = await query(
     'SELECT quantity FROM collections WHERE user_id = ? AND ball_name = ?',
     [targetUser.id, ballName]
