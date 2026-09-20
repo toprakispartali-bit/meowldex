@@ -98,7 +98,7 @@ const balls = {
 "Scotland": "Rare",
 "Wales": "Rare",
 "Ukraine": "Rare",
-"Germany": "Rare",
+"Germany": "Legendary",
 "Serbia": "Uncommon",
 "Bosnia and Herzegovina": "Uncommon",
 "Czechia": "Uncommon",
@@ -224,7 +224,7 @@ const balls = {
 "Canada": "Legendary",
 "Chile": "Legendary",
 "Argentina": "Legendary",
-"Colombia": "Legendary",
+"Colombia": "Rare",
 
 "Venezuela": "Rare",
 "Uruguay": "Rare",
@@ -710,7 +710,7 @@ const rarityOrder = [
   "United Arab Emirates",             // #106
   "Palestine",                        // #107
   "Afghanistan",                      // #108
-  "Colombia",                         // #109
+  "Germany",                         // #109
   "Georgia",                          // #110
   "Armenia",                          // #111
   "Azerbaijan",                       // #112
@@ -721,7 +721,7 @@ const rarityOrder = [
   "Kingdom of Egypt",                        // #117
   "Mutawakkilite Kingdom of Yemen",          // #118
   "Kingdom of Romania",                      // #119
-  "Germany",                                 // #120
+  "Colombia",                                 // #120
   "Kingdom of Serbia",                       // #121
   "South Africa",                            // #122
   "Kingdom of Bulgaria",                     // #123
