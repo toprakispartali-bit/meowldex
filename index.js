@@ -1361,6 +1361,7 @@ async function handleInteraction(interaction) {
         };
       })
     );
+  }
 
 if (
   interaction.commandName === 'collection' &&
@@ -1371,7 +1372,6 @@ if (
   );
 }
     
-  }
 
   if (
     interaction.commandName === 'previewball' &&
@@ -1742,14 +1742,28 @@ if (command === 'collection') {
     : 0;
 
   const normal = Math.max(0, total - halloween);
-  const emoji = ballEmojis[ballName] || '';
+const emoji = ballEmojis[ballName] || '';
 
+if (total === 0) {
   return interaction.editReply(
-    `${emoji} **${ballName} Collection — ${targetUser}**\n\n` +
-    `Normal: ×${normal}\n` +
-    `🎃 Halloween: ×${halloween}\n` +
-    `**Total: ${total}**`
+    `You don't own a ${ballName} ${emoji} ball yet.`
   );
+}
+
+const normalText = normal > 0
+  ? `Normal: ${normal}`
+  : `Normal:\n\nNone yet`;
+
+const specialsText = halloween > 0
+  ? `🎃 Halloween: ${halloween}`
+  : `None yet`;
+
+return interaction.editReply(
+  `**${targetUser}'s ${ballName} ${emoji} Collection**\n\n` +
+  `${normalText}\n\n` +
+  `Specials:\n\n` +
+  `${specialsText}`
+);
 }
   
   if (command === 'previewball') {
@@ -1858,7 +1872,7 @@ if (interaction.commandName === "list") {
   );
 
   return interaction.reply({
-    content: `**MeowlDex Global Rarity Ranking**\n**Page 1/${totalPages}**\n\n${content}`,
+    content: `**MeowlDex Rarity Ranking**\n**Page 1/${totalPages}**\n\n${content}`,
     components: [row]
   });
 }
