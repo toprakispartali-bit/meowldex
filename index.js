@@ -1235,7 +1235,7 @@ client.on('messageCreate', async message => {
 
 const channelId =
   message.guild.id === "1549135179245686854"
-    ? message.channel.id
+    ? "1549135180483010704"
     : configuredChannelId;
 
 if (!channelId || autoSpawnInProgress) return;
