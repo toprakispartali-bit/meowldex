@@ -178,7 +178,7 @@ const balls = {
 "Austrian Empire": "Legendary",
 "Polish-Lithuanian Commonwealth": "Superpower",
 "First Mexican Empire": "Legendary",
-"Empire of Brazil": "Rare",
+"Empire of Brazil": "Legendary",
 "Kingdom of Romania": "Rare",
 "Kingdom of Greece": "Legendary",
 "Kingdom of Bulgaria": "Rare",
@@ -1025,10 +1025,24 @@ async function setupTursoDatabase() {
     channel_id TEXT NOT NULL DEFAULT ''
   )`);
   const info = await query('PRAGMA table_info(active_spawns)');
-  if (!info.rows.some(row => row[1].value === 'channel_id')) {
-    await query("ALTER TABLE active_spawns ADD COLUMN channel_id TEXT NOT NULL DEFAULT ''");
-  }
-  console.log('MeowlDex database ready!');
+
+if (!info.rows.some(row => row[1].value === 'channel_id')) {
+  await query("ALTER TABLE active_spawns ADD COLUMN channel_id TEXT NOT NULL DEFAULT ''");
+}
+
+if (!info.rows.some(row => row[1].value === 'trait')) {
+  await query("ALTER TABLE active_spawns ADD COLUMN trait TEXT NOT NULL DEFAULT ''");
+}
+
+await query(`CREATE TABLE IF NOT EXISTS collection_variants (
+  user_id TEXT NOT NULL,
+  ball_name TEXT NOT NULL,
+  trait TEXT NOT NULL,
+  quantity INTEGER NOT NULL DEFAULT 1,
+  PRIMARY KEY (user_id, ball_name, trait)
+)`);
+  
+console.log('MeowlDex database ready!');
 }
 
 function normalize(text) {
@@ -1093,12 +1107,17 @@ function catchRow(disabled = false, label = 'Catch') {
 }
 
 async function loadSavedSpawn(messageId) {
-  const result = await query(`SELECT ball_name, is_test, expires_at, channel_id
+  const result = await query(`SELECT ball_name, is_test, expires_at, channel_id, trait
     FROM active_spawns WHERE message_id = ?`, [messageId]);
   const row = result.rows[0];
   if (!row || (Number(row[2].value) !== 0 && Number(row[2].value) <= Date.now())) return null;
-  return { ballName: row[0].value, isTest: Number(row[1].value) === 1,
-    expiresAt: Number(row[2].value), channelId: row[3].value };
+  return {
+  ballName: row[0].value,
+  isTest: Number(row[1].value) === 1,
+  expiresAt: Number(row[2].value),
+  channelId: row[3].value,
+  trait: row[4].value
+};
 }
 
 async function claimSavedSpawn(messageId, userId, ballName) {
@@ -1110,12 +1129,25 @@ async function claimSavedSpawn(messageId, userId, ballName) {
         AND (expires_at = 0 OR expires_at > ?)
       ON CONFLICT(user_id, ball_name) DO UPDATE SET quantity = collections.quantity + 1`,
     [userId, messageId, ballName, now]),
+
+    statement(`INSERT INTO collection_variants (user_id, ball_name, trait, quantity)
+      SELECT ?, ball_name, trait, 1 FROM active_spawns
+      WHERE message_id = ? AND ball_name = ? AND is_test = 0
+        AND trait != '' AND (expires_at = 0 OR expires_at > ?)
+      ON CONFLICT(user_id, ball_name, trait)
+      DO UPDATE SET quantity = collection_variants.quantity + 1`,
+[userId, messageId, ballName, now]),
+    
     statement(`DELETE FROM active_spawns WHERE message_id = ? AND ball_name = ?
-      AND (expires_at = 0 OR expires_at > ?) RETURNING ball_name, is_test`,
+      AND (expires_at = 0 OR expires_at > ?) RETURNING ball_name, is_test, trait`,
     [messageId, ballName, now])
   ]);
-  const row = results[1].rows[0];
-  return row ? { ballName: row[0].value, isTest: Number(row[1].value) === 1 } : null;
+  const row = results[2].rows[0];
+  return row ? {
+  ballName: row[0].value,
+  isTest: Number(row[1].value) === 1,
+  trait: row[2].value
+} : null;
 }
 
 async function transferBall(sender, recipient, ballName) {
@@ -1155,16 +1187,23 @@ function clearExpiry(messageId) {
 
 async function expireSpawn(messageId, channelId) {
   clearExpiry(messageId);
+
   const removed = await query(`DELETE FROM active_spawns
-    WHERE message_id = ? AND is_test = 0 AND expires_at <= ? RETURNING message_id`,
-  [messageId, Date.now()]);
+      WHERE message_id = ? AND is_test = 0 AND expires_at <= ? RETURNING message_id`,
+    [messageId, Date.now()]);
+
   if (!removed.rows.length) return;
   if (!channelId) return;
+
   try {
     const channel = await client.channels.fetch(channelId);
-    await channel.messages.delete(messageId);
+    const message = await channel.messages.fetch(messageId);
+
+    await message.edit({
+      components: [catchRow(true, 'Expired')]
+    });
   } catch (error) {
-    console.error('Could not delete expired spawn message:', error.message);
+    console.error('Could not mark expired spawn:', error.message);
   }
 }
 
@@ -1182,10 +1221,11 @@ async function restoreSpawnTimers() {
   for (const row of saved.rows) scheduleExpiry(row[0].value, row[1].value, Number(row[2].value));
 }
 
-async function saveSpawn(message, ballName, isTest) {
+async function saveSpawn(message, ballName, isTest, trait = '') {
   const expiresAt = isTest ? 0 : Date.now() + SPAWN_LIFETIME;
-  await query(`INSERT INTO active_spawns (message_id, ball_name, is_test, expires_at, channel_id)
-    VALUES (?, ?, ?, ?, ?)`, [message.id, ballName, isTest ? 1 : 0, expiresAt, message.channelId]);
+ await query(`INSERT INTO active_spawns (message_id, ball_name, is_test, expires_at, channel_id, trait)
+    VALUES (?, ?, ?, ?, ?, ?)`,
+  [message.id, ballName, isTest ? 1 : 0, expiresAt, message.channelId, trait]);
   if (!isTest) scheduleExpiry(message.id, message.channelId, expiresAt);
 }
 
@@ -1277,8 +1317,7 @@ const ballEmojis = {
   "Nigeria": "<:nigeria:1550598412834185337>",
   "England": "<:england:1550602358235340830>",
   "Morocco": "<:morocco:1550607552297836634>",
-  "United Kingdom": "<:unitedkingdom:1550969411202977882>",
-  
+  "United Kingdom": "<:unitedkingdom:1550969411202977882>"
 };
 
 async function handleInteraction(interaction) {
@@ -1474,6 +1513,7 @@ if (interaction.isButton() && interaction.customId.startsWith('list_')) {
   });
 }
     const claimed = await claimSavedSpawn(messageId, interaction.user.id, spawn.ballName);
+
     if (!claimed) return interaction.editReply('This spawn was caught or expired before your answer could be saved.');
     clearExpiry(messageId);
     const correctMessages = [
@@ -1491,8 +1531,14 @@ const randomCorrect =
   correctMessages[Math.floor(Math.random() * correctMessages.length)];
 
 await interaction.editReply({
-  content: randomCorrect +
-    (claimed.isTest ? '\nTest spawn — not added to your collection.' : ''),
+  content:
+    randomCorrect +
+    (claimed.trait === 'Halloween'
+      ? '\n*Spooky ball you got there! Happy Halloween! 🎃*'
+      : '') +
+    (claimed.isTest
+      ? '\nTest spawn — not added to your collection.'
+      : ''),
   allowedMentions: { parse: [] }
 });
     // A Discord message-edit failure must not undo or repeat a successful award.
@@ -1672,7 +1718,7 @@ if (command === 'collection') {
     let message;
     try {
       message = await interaction.editReply({ content: 'A wild country ball appeared!', files: [customArt.Turkiye], components: [catchRow(true, 'Preparing…')] });
-      await saveSpawn(message, 'Turkiye', true);
+      await saveSpawn(message, 'Turkiye', true, 'Halloween');
       await message.edit({ components: [catchRow()] });
     } catch (error) {
       if (message) await query('DELETE FROM active_spawns WHERE message_id = ?', [message.id]).catch(() => {});
