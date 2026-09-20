@@ -1329,6 +1329,9 @@ const ballEmojis = {
   "Palestine": "<:palestine:1551208509268426952>",
   "El Salvador": "<:elsalvador:1551206017012863067>",
   "Malaysia": "<:malaysia:1551212426995826688>",
+  "Oman": "<:oman:1551295032978317452>",
+  "Malta": "<:malta:1551296205672161280>",
+  "Palau": "<:palau:1551299898937450596>",
 };
 
 async function handleInteraction(interaction) {
