@@ -1248,13 +1248,14 @@ if (!channelId || autoSpawnInProgress) return;
     console.log(`[MeowlDex] Messages until spawn: ${messagesUntilSpawn}`);
     if (messagesUntilSpawn > 0) return;
     const ballName = pickWeightedBall();
+    const trait = Math.random() < 0.10 ? 'Halloween' : '';
     const channel = await client.channels.fetch(channelId);
     if (!channel?.isTextBased()) throw new Error('Spawn channel is unavailable.');
     // Enable Catch only after the record has been saved.
     spawnMessage = await channel.send({ content: 'A wild country ball appeared!',
       files: [customArt[ballName] || `https://flagcdn.com/w320/${flagCodes[ballName]}.png`],
       components: [catchRow(true, 'Preparing…')] });
-    await saveSpawn(spawnMessage, ballName, false);
+    await saveSpawn(spawnMessage, ballName, false, trait);
     await spawnMessage.edit({ components: [catchRow()] });
     messagesUntilSpawn = Math.floor(Math.random() * 20) + 10;
   } catch (error) {
@@ -1718,7 +1719,8 @@ if (command === 'collection') {
     let message;
     try {
       message = await interaction.editReply({ content: 'A wild country ball appeared!', files: [customArt.Turkiye], components: [catchRow(true, 'Preparing…')] });
-      await saveSpawn(message, 'Turkiye', true, 'Halloween');
+      const trait = Math.random() < 0.10 ? 'Halloween' : '';
+      await saveSpawn(message, 'Turkiye', true, trait);
       await message.edit({ components: [catchRow()] });
     } catch (error) {
       if (message) await query('DELETE FROM active_spawns WHERE message_id = ?', [message.id]).catch(() => {});
